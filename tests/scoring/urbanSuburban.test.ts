@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
+import { bandFor, urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
 import { parseAmenityElements, type OverpassElement } from '@/lib/providers/overpass';
 import type { Amenity, Coordinates } from '@/lib/report/types';
 import denseUrban from '../fixtures/dense-urban.json';
@@ -94,5 +94,10 @@ describe('urbanSuburbanIndex', () => {
     expect(vt).toBeLessThan(plano);
     expect(plano).toBeLessThan(Math.min(dc, brookline));
     expect(vt).toBeLessThan(20);
+
+    // Bands must be right, not merely ordered: a Texas subdivision is not rural.
+    expect(bandFor(plano)).toBe('Suburban');
+    expect(bandFor(dc)).toBe('Dense Urban');
+    expect(bandFor(brookline)).toBe('Dense Urban');
   });
 });

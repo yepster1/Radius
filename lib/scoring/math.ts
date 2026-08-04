@@ -21,3 +21,15 @@ export function norm(value: number, cap: number): number {
   if (cap <= 0) return 0;
   return clamp(value / cap, 0, 1);
 }
+
+/**
+ * Normalise a heavy-tailed count to [0,1] on a log scale. Amenity density is
+ * heavy-tailed — a linear cap either saturates the dense head (losing all
+ * gradation between "very dense" and "extremely dense") or crushes the
+ * middle (a 21-amenity suburb reads as indistinguishable from 0). Measured:
+ * norm(21, 150) = 0.14, labelling a real Texas subdivision "Rural".
+ */
+export function normLog(value: number, cap: number): number {
+  if (cap <= 0 || value <= 0) return 0;
+  return clamp(Math.log1p(value) / Math.log1p(cap), 0, 1);
+}

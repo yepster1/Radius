@@ -1,14 +1,20 @@
-import { clamp, norm } from './math';
+import { clamp, norm, normLog } from './math';
 import type { Amenity, StreetContext, UrbanBand } from '@/lib/report/types';
 
-const AMENITY_CAP = 150;
+// Amenity density is heavy-tailed (measured within 1km: rural 0, Plano 21,
+// Brookline 400, DC 793), so it is normalised on a log scale — a linear cap
+// either saturates the dense head or crushes the middle. A cap of 150 with
+// linear norm() put both DC and Brookline at index 100 (no gradation past
+// ~150) and Plano at 14, "Rural" — a Texas subdivision. normLog against 800
+// keeps DC and Brookline distinct and lands Plano at 46, "Suburban".
+const AMENITY_CAP = 800;
 // Measured across the four reference points: rural 0, car-dependent 238,
 // dense urban 439, transit suburb 507. A cap of 120 saturated three of the
 // four, collapsing the term to a rural/non-rural switch.
 const INTERSECTION_CAP = 500;
 const BUILDING_CAP = 400;
 
-function bandFor(index: number): UrbanBand {
+export function bandFor(index: number): UrbanBand {
   if (index <= 25) return 'Rural';
   if (index <= 50) return 'Suburban';
   if (index <= 75) return 'Urban';
@@ -25,7 +31,7 @@ export function urbanSuburbanIndex(
 ): { index: number; band: UrbanBand } {
   const nearby = amenities.filter((a) => a.distanceM <= 1000).length;
 
-  const terms = [{ weight: 0.45, value: norm(nearby, AMENITY_CAP) }];
+  const terms = [{ weight: 0.45, value: normLog(nearby, AMENITY_CAP) }];
 
   // When the street lookup failed its numbers are placeholders, not data.
   // Renormalising over the signals we actually have stops a transient

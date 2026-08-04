@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clamp, decay, norm } from '@/lib/scoring/math';
+import { clamp, decay, norm, normLog } from '@/lib/scoring/math';
 
 describe('clamp', () => {
   it('passes through a value inside the range', () => {
@@ -54,5 +54,37 @@ describe('norm', () => {
 
   it('returns 0 for a zero or negative cap rather than dividing by zero', () => {
     expect(norm(50, 0)).toBe(0);
+  });
+});
+
+describe('normLog', () => {
+  it('returns 0 for a value of zero', () => {
+    expect(normLog(0, 800)).toBe(0);
+  });
+
+  it('returns 0 for a zero or negative cap rather than dividing by zero', () => {
+    expect(normLog(50, 0)).toBe(0);
+  });
+
+  it('saturates at 1 once the value reaches the cap', () => {
+    expect(normLog(800, 800)).toBe(1);
+    expect(normLog(5000, 800)).toBe(1);
+  });
+
+  it('grows with diminishing returns rather than linearly', () => {
+    // The same fixed-size step of 10 moves the score far more near the
+    // bottom of the range than near the top — that's the whole point of
+    // compressing a heavy tail instead of normalising it linearly.
+    const earlyJump = normLog(20, 800) - normLog(10, 800);
+    const lateJump = normLog(710, 800) - normLog(700, 800);
+    expect(earlyJump).toBeGreaterThan(lateJump);
+  });
+
+  it('places a modest count in the middle of the range, not crushed toward 0', () => {
+    // The exact case that mislabelled a real suburb as Rural under linear
+    // normalisation: 21 amenities against an 800 cap.
+    const value = normLog(21, 800);
+    expect(value).toBeGreaterThan(0.4);
+    expect(value).toBeLessThan(0.5);
   });
 });
