@@ -860,7 +860,10 @@ Create `lib/report/types.ts`:
 ```ts
 // Single source of truth — defined in Task 2, re-exported here for convenience
 // so consumers can import every shared type from one module.
-export type { Coordinates } from '@/lib/geo/distance';
+// A bare `export type { X } from '...'` is a pure re-export and creates no
+// local binding, so `Report` below could not reference it. Import, then export.
+import type { Coordinates } from '@/lib/geo/distance';
+export type { Coordinates };
 
 export type CategoryId =
   | 'grocery'
