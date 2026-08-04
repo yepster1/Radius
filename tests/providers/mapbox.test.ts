@@ -1,12 +1,4 @@
-// @vitest-environment node
-import { describe, expect, it, vi } from 'vitest';
-
-// `server-only` resolves to a no-op only under the `react-server` export
-// condition, which Next.js's bundler sets and Vitest does not — switching
-// the test environment (jsdom/node) has no effect on module resolution, so
-// the import throws unconditionally under Vitest without this mock.
-vi.mock('server-only', () => ({}));
-
+import { describe, expect, it } from 'vitest';
 import { parseSuggestResponse, parseReverseResponse } from '@/lib/providers/mapbox';
 
 const valid = {

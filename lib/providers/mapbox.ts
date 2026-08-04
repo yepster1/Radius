@@ -1,5 +1,3 @@
-import 'server-only';
-
 import type { AddressSuggestion, Coordinates } from '@/lib/report/types';
 
 const SEARCH_BASE = 'https://api.mapbox.com/search/searchbox/v1';

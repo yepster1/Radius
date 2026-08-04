@@ -14,6 +14,27 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    // Components render a Report; they never compute one and never touch I/O.
+    // `server-only` was tried here first and verified useless: under Next 16 its
+    // throw is stripped from the client bundle, so it guards nothing.
+    files: ['components/**/*.ts', 'components/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/providers/**', '**/providers/**'],
+              message:
+                'Components must not import providers — they read secrets and perform I/O. ' +
+                'Fetch in a server component or route handler and pass the data down as props.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['lib/scoring/**/*.ts'],
     rules: {
       'no-restricted-globals': [
