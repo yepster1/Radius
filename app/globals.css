@@ -28,3 +28,9 @@ h1, h2, h3, h4 {
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
+
+/* Every mono surface — buttons, labels, score captions — carries this
+   tracking. Setting it on the utility means components never restate it. */
+.font-mono {
+  letter-spacing: 0.015em;
+}

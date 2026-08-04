@@ -25,7 +25,13 @@ const eslintConfig = defineConfig([
         'error',
         {
           patterns: [
-            { group: ['@/lib/providers/*'], message: 'lib/scoring must not depend on I/O.' },
+            {
+              // Both forms must be blocked. An alias-only pattern is trivially
+              // bypassed by `import x from '../providers/overpass'`, which would
+              // silently defeat the whole purity guarantee.
+              group: ['@/lib/providers/**', '**/providers/**'],
+              message: 'lib/scoring must not depend on I/O.',
+            },
           ],
         },
       ],
