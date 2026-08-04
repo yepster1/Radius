@@ -15,7 +15,7 @@ export default function HomePage() {
           Know the address before you list it.
         </h1>
         <p className="mx-auto mb-8 max-w-[52ch] text-gray-3">
-          Walkability, transit, nearby businesses and renter fit — for any US address, in one page.
+          Walkability, transit, nearby businesses and how urban the area is — for any US address, in one page.
         </p>
         <AddressSearch />
         <RecentSearches />

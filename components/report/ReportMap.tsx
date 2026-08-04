@@ -111,7 +111,7 @@ export function ReportMap({ report }: { report: Report }) {
     <div
       ref={container}
       aria-label={`Map of ${report.address} with nearby amenities`}
-      role="img"
+      role="region"
       className="h-[420px] w-full overflow-hidden rounded-card border border-gray-4 bg-gray-5"
     />
   );

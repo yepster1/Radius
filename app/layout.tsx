@@ -17,7 +17,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'Radius — know the address before you list it',
   description:
-    'Walkability, transit, nearby businesses and renter fit for any US address.',
+    'Walkability, transit, nearby businesses and how urban the area is for any US address.',
 };
 
 export default function RootLayout({

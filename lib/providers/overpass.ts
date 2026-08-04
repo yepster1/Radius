@@ -156,7 +156,7 @@ export async function fetchAmenities(
   radiusM: number,
 ): Promise<Amenity[]> {
   if (fixtureModeEnabled()) {
-    return parseAmenityElements(fixtureElementsFor(coords), coords)
+    return parseAmenityElements(await fixtureElementsFor(coords), coords)
       .filter((a) => a.distanceM <= radiusM);
   }
 
@@ -217,7 +217,12 @@ out center;`;
 
 export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
   if (fixtureModeEnabled()) {
-    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: true };
+    // These are downtown DC's measured values, retained only so the shape is
+    // realistic — they are not derived from `coords`. `available: false` is
+    // the honest signal here: they are placeholders, and urbanSuburbanIndex
+    // already renormalises over the remaining signals when street data is
+    // unavailable, so this does not silently misrepresent other addresses.
+    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: false };
   }
 
   // An "intersection" per the published methodology is a node shared by two

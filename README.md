@@ -44,9 +44,9 @@ signals it actually has rather than reading missing data as zero.
 
 **What was measured and removed.** Walk Score originally applied an
 intersection-density penalty, so that a connected grid would beat a cul-de-sac with
-the same amenity count. Measuring junctions per km² across the four reference
-locations gave rural 0, car-dependent suburb 238, dense urban 439, transit suburb
-507 — no threshold separates walkable from car-dependent, and the leafy suburb
+the same amenity count. Measuring junctions within a 1 km radius across the four
+reference locations gave rural 0, car-dependent suburb 238, dense urban 439, transit
+suburb 507 — no threshold separates walkable from car-dependent, and the leafy suburb
 outranks downtown DC. OpenStreetMap splits a way whenever a tag changes, so the
 proxy measures OSM bookkeeping as much as street topology. The penalty was removed
 rather than shipped as a term that does no work.
@@ -78,8 +78,9 @@ npm test         # unit — scoring engine, geo utilities, components
 npm run test:e2e # Playwright — search flow and cold-visitor share
 ```
 
-Unit tests run offline against four recorded Overpass fixtures (dense urban,
-transit suburb, car-dependent suburb, rural). The e2e suite runs the real app but
+Unit tests run offline against five recorded Overpass fixtures (dense urban,
+transit suburb, car-dependent suburb, rural, and dense-urban street geometry). The
+e2e suite runs the real app but
 sets `RADIUS_FIXTURE_MODE=1`, which swaps the Overpass provider for those same
 fixtures — CI stays green on the health of this repository, not of a free
 community API with no uptime guarantee.

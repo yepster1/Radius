@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import denseUrban from '../fixtures/dense-urban.json';
 import rural from '../fixtures/rural.json';
-import { parseAmenityElements, type OverpassElement } from '@/lib/providers/overpass';
+import {
+  fetchStreetContext, parseAmenityElements, type OverpassElement,
+} from '@/lib/providers/overpass';
 
 const DC = { lat: 38.8977, lon: -77.0365 };
 // NOTE: 44.4759, -73.2121 (as given in the task brief) is downtown
@@ -56,5 +58,17 @@ describe('parseAmenityElements', () => {
 
   it('returns an empty array for an empty element list', () => {
     expect(parseAmenityElements([], DC)).toEqual([]);
+  });
+});
+
+describe('fetchStreetContext', () => {
+  afterEach(() => {
+    delete process.env.RADIUS_FIXTURE_MODE;
+  });
+
+  it('reports unavailable in fixture mode — the values are DC placeholders, not a real lookup', async () => {
+    process.env.RADIUS_FIXTURE_MODE = '1';
+    const street = await fetchStreetContext(DC);
+    expect(street.available).toBe(false);
   });
 });
