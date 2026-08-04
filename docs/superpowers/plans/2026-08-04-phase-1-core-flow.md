@@ -233,6 +233,28 @@ Append to `eslint.config.mjs` (inside the exported array):
 
 ```js
 {
+  // Components render a Report; they never compute one and never touch I/O.
+  // This is the enforceable half of the layering rule. `server-only` was tried
+  // here first and verified useless: under Next 16 its throw is stripped from
+  // the client bundle entirely, so it guards nothing while looking like it does.
+  files: ['components/**/*.ts', 'components/**/*.tsx'],
+  rules: {
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['@/lib/providers/**', '**/providers/**'],
+            message:
+              'Components must not import providers — they read secrets and perform I/O. ' +
+              'Fetch in a server component or route handler and pass the data down as props.',
+          },
+        ],
+      },
+    ],
+  },
+},
+{
   files: ['lib/scoring/**/*.ts'],
   rules: {
     'no-restricted-globals': [
@@ -975,7 +997,16 @@ export type Report = {
   street: StreetContext;
   fifteenMinute: { met: CategoryId[]; missing: CategoryId[] };
   dataSparse: boolean;
+  /**
+   * Sources whose lookup failed. Their scores are 0 because we could not ask,
+   * not because the answer is 0 — a distinction the UI must surface rather than
+   * render a confident zero. `street.available` is the granular flag scoring
+   * consumes; this is the report-level list the page renders from.
+   */
+  unavailable: DataSource[];
 };
+
+export type DataSource = 'transit' | 'street';
 
 export type AddressSuggestion = {
   mapboxId: string;
@@ -2581,6 +2612,22 @@ describe('AddressSearch', () => {
     expect(push.mock.calls[0][0]).toContain('1600-pennsylvania-ave-se');
   });
 
+  it('does not re-query after a selection', async () => {
+    const user = userEvent.setup();
+    render(<AddressSearch />);
+    await user.type(screen.getByRole('combobox'), '1600 Penn');
+    await user.click(await screen.findByText('1600 Pennsylvania Avenue NW'));
+    await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
+
+    const suggestCalls = () =>
+      vi.mocked(fetch).mock.calls.filter(([u]) => String(u).includes('q=')).length;
+    const before = suggestCalls();
+    // Longer than the 250 ms debounce: a stale re-query would land in this window.
+    await new Promise((r) => setTimeout(r, 500));
+    expect(suggestCalls()).toBe(before);
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
   it('closes the list on Escape', async () => {
     const user = userEvent.setup();
     render(<AddressSearch />);
@@ -2622,10 +2669,24 @@ export function AddressSearch() {
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
 
-  // One session token per widget instance — Mapbox bills per session, not per keystroke.
-  const session = useRef(crypto.randomUUID());
+  // One session token per widget instance — Mapbox bills per session, not per
+  // keystroke. Lazily initialised: `useRef(crypto.randomUUID())` would call it
+  // on every render and discard the result, and it throws outside a secure context.
+  const session = useRef<string | null>(null);
+  if (session.current === null) session.current = crypto.randomUUID();
+
+  // Set when `select` rewrites the query, so the debounce effect skips the run
+  // that change triggers. Without it every selection fires one more billable
+  // autocomplete call and can reopen the list with stale results after the
+  // user has already chosen.
+  const skipNextQuery = useRef(false);
 
   useEffect(() => {
+    if (skipNextQuery.current) {
+      skipNextQuery.current = false;
+      return;
+    }
+
     if (query.trim().length < MIN_QUERY) {
       setSuggestions([]);
       setOpen(false);
@@ -2658,18 +2719,27 @@ export function AddressSearch() {
   const select = useCallback(
     async (suggestion: AddressSuggestion) => {
       setOpen(false);
+      skipNextQuery.current = true;
       setQuery(suggestion.primary);
 
-      const res = await fetch(
-        `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
-      );
-      if (!res.ok) return;
+      try {
+        const res = await fetch(
+          `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
+        );
+        if (!res.ok) return;
 
-      const { address, lat, lon } = (await res.json()) as {
-        address: string; lat: number; lon: number;
-      };
+        const { lat, lon } = (await res.json()) as { lat: number; lon: number };
 
-      router.push(`/a/${buildSlug(address || suggestion.primary, lat, lon)}`);
+        // The slug's readable half is decorative — the report page reverse-geocodes
+        // the coordinates for the canonical address — so the text the user actually
+        // clicked is the honest thing to put here.
+        const label = [suggestion.primary, suggestion.secondary]
+          .filter(Boolean)
+          .join(' ');
+        router.push(`/a/${buildSlug(label, lat, lon)}`);
+      } catch {
+        // Network failure or malformed JSON: stay put rather than reject unhandled.
+      }
     },
     [router],
   );
@@ -2848,6 +2918,7 @@ describe('buildReport', () => {
     expect(report.scores.overall).toBeGreaterThan(0);
     expect(report.amenities.length).toBeGreaterThan(0);
     expect(report.fifteenMinute.met.length + report.fifteenMinute.missing.length).toBe(9);
+    expect(report.unavailable).toEqual([]);
   });
 
   it('fetches amenities at the 8km drive radius, not 2km', async () => {
@@ -2860,12 +2931,28 @@ describe('buildReport', () => {
     const report = await buildReport('x', DC);
     expect(report.scores.transit).toBe(0);
     expect(report.scores.walk).toBeGreaterThan(0);
+    expect(report.unavailable).toContain('transit');
+  });
+
+  it('distinguishes a failed transit lookup from a genuine absence of transit', async () => {
+    // Both yield transit: 0. Only the failure is a claim we cannot make, so
+    // only the failure may be reported as unavailable.
+    vi.mocked(overpass.fetchTransitStops).mockResolvedValue([]);
+    const genuinelyEmpty = await buildReport('x', DC);
+    expect(genuinelyEmpty.scores.transit).toBe(0);
+    expect(genuinelyEmpty.unavailable).not.toContain('transit');
+
+    vi.mocked(overpass.fetchTransitStops).mockRejectedValue(new Error('down'));
+    const failed = await buildReport('x', DC);
+    expect(failed.scores.transit).toBe(0);
+    expect(failed.unavailable).toContain('transit');
   });
 
   it('still produces a report when street context fails', async () => {
     vi.mocked(overpass.fetchStreetContext).mockRejectedValue(new Error('down'));
     const report = await buildReport('x', DC);
     expect(report.street.available).toBe(false);
+    expect(report.unavailable).toContain('street');
     expect(report.scores.walk).toBeGreaterThan(0);
   });
 
@@ -2901,7 +2988,9 @@ import { overallScore } from '@/lib/scoring/overall';
 import { transitScore } from '@/lib/scoring/transit';
 import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
 import { walkScore } from '@/lib/scoring/walk';
-import type { Coordinates, Report, StreetContext, TransitStop } from '@/lib/report/types';
+import type {
+  Coordinates, DataSource, Report, StreetContext, TransitStop,
+} from '@/lib/report/types';
 
 /** Fetch at the widest radius any score needs, then let each score filter down. */
 const FETCH_RADIUS_M = 8000;
@@ -2931,10 +3020,15 @@ export async function buildReport(
   const amenities = amenityResult.value;
 
   // Transit and street context are refinements; degrade rather than fail.
+  const unavailable: DataSource[] = [];
+
   const transitStops: TransitStop[] =
     transitResult.status === 'fulfilled' ? transitResult.value : [];
+  if (transitResult.status === 'rejected') unavailable.push('transit');
+
   const street: StreetContext =
     streetResult.status === 'fulfilled' ? streetResult.value : NEUTRAL_STREET;
+  if (!street.available) unavailable.push('street');
 
   const walk = walkScore(amenities);
   const drive = driveScore(amenities);
@@ -2959,6 +3053,7 @@ export async function buildReport(
     street,
     fifteenMinute: fifteenMinuteBreakdown(amenities),
     dataSparse: amenities.length < SPARSE_THRESHOLD,
+    unavailable,
   };
 }
 ```
@@ -3187,7 +3282,12 @@ export function FifteenMinute({ data }: { data: Report['fifteenMinute'] }) {
 Create `components/report/ReportHeader.tsx`:
 
 ```tsx
-import type { Report } from '@/lib/report/types';
+import type { DataSource, Report } from '@/lib/report/types';
+
+const UNAVAILABLE_LABEL: Record<DataSource, string> = {
+  transit: 'Transit data could not be loaded for this address.',
+  street: 'Street-network data could not be loaded for this address.',
+};
 
 export function ReportHeader({ report }: { report: Report }) {
   return (
@@ -3222,6 +3322,19 @@ export function ReportHeader({ report }: { report: Report }) {
         >
           OpenStreetMap has little data for this area, so these scores are based on a thin
           sample. They reflect mapped coverage, not necessarily what is actually there.
+        </p>
+      )}
+
+      {report.unavailable.length > 0 && (
+        <p
+          role="status"
+          className="m-0 rounded-btn border-l-[3px] border-gray-3 bg-gray-5 px-4 py-3 text-sm text-gray-2"
+        >
+          {UNAVAILABLE_LABEL[report.unavailable[0]]}
+          {report.unavailable.length > 1 &&
+            ` ${UNAVAILABLE_LABEL[report.unavailable[1]]}`}{' '}
+          Those figures show 0 because we could not retrieve the data, not because the
+          answer is 0.
         </p>
       )}
     </>
@@ -3759,11 +3872,14 @@ Create `tests/e2e/search.spec.ts`:
 ```ts
 import { expect, test } from '@playwright/test';
 
+// Queries must disambiguate the way a real user's would. "1600 Pennsylvania
+// Ave" without the "NW" ranks Lorain, Ohio first — correct geocoder behaviour
+// for an ambiguous string, but it would send these tests to the wrong city.
 test('search an address and read its report', async ({ page }) => {
   await page.goto('/');
 
   const input = page.getByRole('combobox', { name: /address/i });
-  await input.fill('1600 Pennsylvania Ave');
+  await input.fill('1600 Pennsylvania Ave NW');
 
   const option = page.getByRole('option').first();
   await expect(option).toBeVisible();
@@ -3802,7 +3918,7 @@ import { expect, test } from '@playwright/test';
  */
 test('a shared report renders for a cold visitor', async ({ page, browser }) => {
   await page.goto('/');
-  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave');
+  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave NW');
   await page.getByRole('option').first().click();
   await expect(page).toHaveURL(/\/a\/.+/);
 
@@ -3823,7 +3939,7 @@ test('a shared report renders for a cold visitor', async ({ page, browser }) => 
 
 test('visited addresses appear in recent searches', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave');
+  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave NW');
   await page.getByRole('option').first().click();
   await expect(page).toHaveURL(/\/a\/.+/);
 

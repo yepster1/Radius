@@ -40,6 +40,9 @@ export type StreetContext = {
 
 export type UrbanBand = 'Rural' | 'Suburban' | 'Urban' | 'Dense Urban';
 
+/** A refinement data source whose lookup can fail without failing the report. */
+export type DataSource = 'transit' | 'street';
+
 export type Scores = {
   walk: number;
   drive: number;
@@ -59,6 +62,8 @@ export type Report = {
   street: StreetContext;
   fifteenMinute: { met: CategoryId[]; missing: CategoryId[] };
   dataSparse: boolean;
+  /** Refinement sources whose lookup failed (or, for street, degraded to placeholder). */
+  unavailable: DataSource[];
 };
 
 export type AddressSuggestion = {
