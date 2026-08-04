@@ -148,27 +148,42 @@ out center;`;
 }
 
 export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
-  const query = `[out:json][timeout:30];
+  // An "intersection" per the published methodology is a node shared by two
+  // or more highway ways (degree >= 3, counting the ways that meet there).
+  // `out count` over `node(w)` counts every node on every way — including
+  // curve vertices — which inflates the figure several fold. Fetch the way
+  // geometry instead and let countJunctions() do the real counting.
+  const highwaysQuery = `[out:json][timeout:30];
 way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"](around:1000,${coords.lat},${coords.lon});
-node(w)->.junctions;
-(
-  .junctions;
-  way["building"](around:500,${coords.lat},${coords.lon});
-);
+out skel;`;
+
+  const buildingsQuery = `[out:json][timeout:30];
+way["building"](around:500,${coords.lat},${coords.lon});
 out count;`;
 
   try {
-    const elements = await runQuery(query);
-    const counts = elements.find((e) => e.type === 'count') as
+    const [highwayElements, buildingElements] = await Promise.all([
+      runQuery(highwaysQuery),
+      runQuery(buildingsQuery),
+    ]);
+
+    const ways: HighwayWay[] = highwayElements
+      .filter((e) => e.type === 'way' && Array.isArray(e.nodes))
+      .map((e) => ({ nodes: e.nodes ?? [] }));
+
+    const buildingCount = buildingElements.find((e) => e.type === 'count') as
       | (OverpassElement & { tags?: Record<string, string> })
       | undefined;
 
     return {
-      intersectionsWithin1km: Number(counts?.tags?.nodes ?? 0),
-      buildingsWithin500m: Number(counts?.tags?.ways ?? 0),
+      intersectionsWithin1km: countJunctions(ways),
+      buildingsWithin500m: Number(buildingCount?.tags?.ways ?? 0),
+      available: true,
     };
   } catch {
-    // Street context is a refinement, not a requirement — degrade to neutral.
-    return { intersectionsWithin1km: 30, buildingsWithin500m: 0 };
+    // Street context is a refinement, not a requirement — degrade to
+    // neutral, but flag it so downstream scoring can renormalize rather
+    // than silently treating "missing" as "zero".
+    return { intersectionsWithin1km: 30, buildingsWithin500m: 0, available: false };
   }
 }

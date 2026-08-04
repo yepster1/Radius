@@ -23,6 +23,25 @@ const filters = CATEGORIES.flatMap((c) => c.tags)
   })
   .join('\n  ');
 
+async function recordFixture(name: string, query: string): Promise<void> {
+  const res = await fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    // Node's fetch (undici) sends no User-Agent by default; overpass-api.de's
+    // Apache config returns 406 Not Acceptable without one.
+    headers: { 'User-Agent': 'RadiusAddressInsights/1.0 (contact: csmall@taivara.com)' },
+    body: new URLSearchParams({ data: query }),
+  });
+
+  if (!res.ok) throw new Error(`${name}: ${res.status}`);
+
+  const json = await res.json();
+  writeFileSync(`tests/fixtures/${name}.json`, JSON.stringify(json, null, 2));
+  console.log(`${name}: ${json.elements.length} elements`);
+
+  // Public Overpass rate-limits hard; be a good citizen between requests.
+  await new Promise((r) => setTimeout(r, 5000));
+}
+
 // Wrapped in an async main() — not top-level await — because tsx transforms
 // this file as CJS (no "type": "module" in package.json), which disallows it.
 async function main() {
@@ -31,23 +50,17 @@ async function main() {
       .replaceAll('{{lat}}', String(ref.lat))
       .replaceAll('{{lon}}', String(ref.lon));
 
-    const res = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      // Node's fetch (undici) sends no User-Agent by default; overpass-api.de's
-      // Apache config returns 406 Not Acceptable without one.
-      headers: { 'User-Agent': 'RadiusAddressInsights/1.0 (contact: csmall@taivara.com)' },
-      body: new URLSearchParams({ data: query }),
-    });
-
-    if (!res.ok) throw new Error(`${ref.name}: ${res.status}`);
-
-    const json = await res.json();
-    writeFileSync(`tests/fixtures/${ref.name}.json`, JSON.stringify(json, null, 2));
-    console.log(`${ref.name}: ${json.elements.length} elements`);
-
-    // Public Overpass rate-limits hard; be a good citizen between requests.
-    await new Promise((r) => setTimeout(r, 5000));
+    await recordFixture(ref.name, query);
   }
+
+  // Real highway-way geometry for the dense-urban point, so countJunctions()
+  // (lib/scoring/junctions.ts) can be tested against real OSM data instead
+  // of hand-built fixtures alone. Mirrors fetchStreetContext's highway query.
+  const denseUrban = REFERENCES.find((r) => r.name === 'dense-urban')!;
+  const streetQuery = `[out:json][timeout:30];
+way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"](around:1000,${denseUrban.lat},${denseUrban.lon});
+out skel;`;
+  await recordFixture('street-dense-urban', streetQuery);
 }
 
 main();
