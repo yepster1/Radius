@@ -1,0 +1,732 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Address Insights — Implementation Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#ff4f00; --orange-tint:#fff1eb;
+  --charcoal:#141516; --g1:#252a31; --g2:#4b5563; --g3:#adb4c2; --g4:#e5e7eb; --g5:#f3f5f9;
+  --white:#fff;
+  --green:#0f7a4d; --green-tint:#e8f6ef;
+  --amber:#8a5a00; --amber-tint:#fff6e5;
+  --blue:#1d4ed8; --blue-tint:#eaf0fe;
+  --sans:'Archivo',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-card:8px; --r-btn:4.5px;
+}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);color:var(--g1);background:var(--white);
+  font-size:16px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--sans);font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.15}
+p{margin:0 0 16px}
+:where(p,li,td,th,h1,h2,h3,h4){overflow-wrap:anywhere}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono);letter-spacing:.015em}
+
+.masthead{background:var(--charcoal);color:var(--white);padding:64px 0 56px;
+  background-image:radial-gradient(900px 380px at 88% -12%, rgba(255,79,0,.20), transparent 62%)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:20px}
+.masthead h1{font-size:clamp(32px,5.6vw,58px);color:var(--white);max-width:20ch}
+.masthead .lede{color:var(--g3);font-size:clamp(16px,2vw,19px);max-width:64ch;margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.chip{font-family:var(--mono);font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.22);
+  border-radius:9999px;color:var(--g3);white-space:nowrap}
+.chip.on{border-color:var(--orange);color:var(--orange);background:rgba(255,79,0,.09)}
+
+section{padding:80px 0;border-bottom:1px solid var(--g4)}
+section:last-of-type{border-bottom:none}
+.sec-head{display:flex;gap:16px;align-items:baseline;margin-bottom:12px;flex-wrap:wrap}
+.sec-num{font-family:var(--mono);font-size:12px;color:var(--orange);letter-spacing:.14em}
+.sec-head h2{font-size:clamp(26px,3.6vw,38px)}
+.sec-sub{color:var(--g2);max-width:72ch;margin-bottom:40px;font-size:17px}
+
+.card{background:var(--white);border:1px solid var(--g4);border-radius:var(--r-card);padding:24px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 9px;border-radius:9999px;white-space:nowrap;display:inline-block}
+.pill.core{background:var(--charcoal);color:#fff}
+.pill.diff{background:var(--orange);color:#fff}
+.pill.stretch{background:var(--g4);color:var(--g2)}
+.pill.ok{background:var(--green-tint);color:var(--green)}
+
+/* mermaid */
+.mermaid{background:var(--g5);border:1px solid var(--g4);border-radius:var(--r-card);
+  padding:24px;overflow-x:auto;text-align:center}
+.mermaid svg{max-width:100%;height:auto}
+.dcap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--g2);margin:14px 0 10px}
+
+/* tree */
+.tree{background:var(--charcoal);color:#e6e9ee;border-radius:var(--r-card);padding:24px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.85;overflow-x:auto;white-space:pre;margin:0}
+.tree b{color:var(--orange);font-weight:500}
+.tree i{color:var(--g3);font-style:normal}
+.tree u{color:#7fd1a8;text-decoration:none}
+
+/* layer cards */
+.layer{border-left:3px solid var(--g4);padding:18px 20px;background:var(--white);
+  border-top:1px solid var(--g4);border-right:1px solid var(--g4);border-bottom:1px solid var(--g4);
+  border-radius:0 var(--r-card) var(--r-card) 0}
+.layer.io{border-left-color:var(--blue)}
+.layer.pure{border-left-color:var(--green)}
+.layer.orch{border-left-color:var(--orange)}
+.layer.view{border-left-color:var(--g3)}
+.layer h4{font-size:16px;margin-bottom:4px}
+.layer .path{font-family:var(--mono);font-size:11.5px;color:var(--g2);display:block;margin-bottom:8px}
+.layer p{font-size:14px;color:var(--g2);margin:0}
+.layer .rule{font-family:var(--mono);font-size:11px;margin-top:10px;padding-top:10px;
+  border-top:1px dashed var(--g4);display:block}
+.layer.io .rule{color:var(--blue)} .layer.pure .rule{color:var(--green)}
+.layer.orch .rule{color:#c23e00} .layer.view .rule{color:var(--g2)}
+
+/* tables */
+.tscroll{overflow-x:auto;border:1px solid var(--g4);border-radius:var(--r-card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  text-align:left;padding:13px 16px;background:var(--g5);color:var(--g2);
+  border-bottom:1px solid var(--g4);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--g4);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.badge{font-family:var(--mono);font-size:10.5px;padding:4px 9px;border-radius:9999px;
+  white-space:nowrap;display:inline-block}
+.b-real{background:var(--green-tint);color:var(--green)}
+.b-comp{background:var(--orange-tint);color:#c23e00}
+.b-blue{background:var(--blue-tint);color:var(--blue)}
+
+/* phases */
+.phase{border:1px solid var(--g4);border-radius:var(--r-card);overflow:hidden;margin-bottom:16px}
+.phase-h{display:flex;gap:14px;align-items:center;padding:18px 22px;flex-wrap:wrap;
+  border-bottom:1px solid var(--g4)}
+.phase-h.p1{background:var(--charcoal);color:#fff;border-bottom-color:var(--charcoal)}
+.phase-h.p2{background:var(--orange-tint)}
+.phase-h.p3{background:var(--g5)}
+.phase-h h3{font-size:19px;flex:1;min-width:180px}
+.phase-h.p1 h3{color:#fff}
+.phase-b{padding:20px 22px}
+.phase-b p.why{font-size:14.5px;color:var(--g2);margin-bottom:14px}
+.tasklist{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+.tasklist li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;font-size:14px;
+  align-items:baseline}
+.tasklist .n{font-family:var(--mono);font-size:11px;color:var(--g3)}
+.tasklist code{font-family:var(--mono);font-size:12px;background:var(--g5);padding:1px 5px;
+  border-radius:3px;color:var(--g1)}
+.gate{margin-top:16px;padding:13px 15px;border-radius:var(--r-btn);font-size:13.5px;
+  background:var(--green-tint);color:#0b5637;border-left:3px solid var(--green)}
+.gate b{font-weight:600}
+
+/* code surface */
+.codewrap{border:1px solid var(--g4);border-radius:var(--r-card);overflow:hidden;background:var(--charcoal)}
+.codewrap .fname{font-family:var(--mono);font-size:11.5px;color:var(--g3);padding:11px 16px;
+  border-bottom:1px solid #2a2c2e;background:#1b1d1f}
+.codewrap > div{overflow-x:auto}
+
+/* input controls */
+.qbox{background:var(--g5);border:1px solid var(--g4);border-radius:var(--r-card);padding:22px;margin-top:24px}
+.qbox h4{font-size:16px;margin-bottom:4px}
+.qbox .hint{font-size:13.5px;color:var(--g2);margin-bottom:16px}
+.qbtn{font-family:var(--mono);font-size:12.5px;background:var(--orange);color:#fff;border:none;
+  border-radius:var(--r-btn);padding:12px 20px;cursor:pointer;font-weight:500}
+.qbtn:hover{background:#e64700}
+.qstat{font-family:var(--mono);font-size:11.5px;color:var(--green);margin-left:12px}
+.free{width:100%;font-family:var(--sans);font-size:14px;padding:11px 13px;border:1px solid var(--g4);
+  border-radius:var(--r-btn);resize:vertical;min-height:72px;background:#fff;color:var(--g1)}
+.oq{display:grid;gap:10px;margin-bottom:14px}
+.oq label{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer;
+  background:#fff;border:1px solid var(--g4);border-radius:var(--r-btn);padding:11px 13px}
+.oq label:has(input:checked){border-color:var(--orange);background:var(--orange-tint)}
+.oq input{margin:3px 0 0;accent-color:var(--orange);flex:none}
+.oq b{font-weight:600;display:block}
+.oq span.d{color:var(--g2);font-size:13px}
+.dq{border:1px solid var(--g4);border-radius:var(--r-card);padding:20px;background:#fff;margin-bottom:14px}
+.dq .qt{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:8px}
+.dq h4{font-size:16.5px;margin-bottom:10px}
+
+footer{background:var(--charcoal);color:var(--g3);padding:48px 0;font-size:13.5px}
+footer b{color:#fff}
+</style>
+
+<div class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Design review · 02 of 02 · Implementation</div>
+    <h1>How we build it</h1>
+    <p class="lede">Architecture, module boundaries and build phases for the spec approved in review 01.
+      The central decision: an I/O layer and a pure scoring core that never touch each other — which is what
+      makes the interesting logic testable and the report streamable.</p>
+    <div class="chips">
+      <span class="chip on">Next.js 15 · App Router</span>
+      <span class="chip on">TypeScript strict</span>
+      <span class="chip on">Tailwind v4</span>
+      <span class="chip on">RSC + Suspense streaming</span>
+      <span class="chip on">Vitest + Playwright</span>
+      <span class="chip">3 phases · 19 features</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 01 ARCHITECTURE ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Architecture</h2></div>
+    <p class="sec-sub">Four layers, each with one job. The rule that matters: <b>scoring never performs
+      I/O, and providers never contain business logic.</b> Everything good downstream — fast tests,
+      streaming, cheap caching, an OG image that reuses the report — falls out of that one constraint.</p>
+
+    <div class="dcap">Request topology</div>
+    <pre class="mermaid">
+graph TD
+  A["Search page&lt;br/&gt;(client component)"] -->|debounced query| B["/api/autocomplete&lt;br/&gt;route handler"]
+  B -->|secret token, server-side| C["Mapbox Search Box"]
+  A -->|"navigate to /a/{slug}"| D["Report page&lt;br/&gt;(server component)"]
+  D -->|parse slug, decode geohash| E["buildReport(lat, lon)"]
+  E --> F["Overpass&lt;br/&gt;amenities + roads"]
+  E --> G["Census ACS&lt;br/&gt;demographics"]
+  F --> H["lib/scoring&lt;br/&gt;pure functions"]
+  G --> H
+  H --> I["Report object"]
+  I --> J["Streamed insight cards"]
+  I --> K["Mapbox GL map&lt;br/&gt;(client component)"]
+  I --> L["opengraph-image"]
+  I -.->|"optional, cached"| M["/api/listing-angles&lt;br/&gt;→ Claude Haiku"]
+    </pre>
+
+    <div class="grid g2" style="margin-top:32px">
+      <div class="layer io">
+        <h4>Providers</h4><span class="path">lib/providers/</span>
+        <p>Thin clients for Mapbox, Overpass, Census and Anthropic. Each takes primitives, returns typed raw
+          data, and knows nothing about scores or personas.</p>
+        <span class="rule">Rule: I/O only. No business logic.</span>
+      </div>
+      <div class="layer pure">
+        <h4>Scoring</h4><span class="path">lib/scoring/</span>
+        <p>Every formula from the spec. Takes an already-fetched dataset, returns numbers. No fetch, no
+          <span class="mono">Date.now()</span>, no randomness — same input always gives the same output.</p>
+        <span class="rule">Rule: pure. Zero I/O. 100% unit-testable.</span>
+      </div>
+      <div class="layer orch">
+        <h4>Report</h4><span class="path">lib/report/</span>
+        <p>The only place the two meet. Fetches in parallel, feeds datasets into scoring, assembles one
+          typed <span class="mono">Report</span> object. Also owns caching and graceful degradation.</p>
+        <span class="rule">Rule: orchestration only. No formulas.</span>
+      </div>
+      <div class="layer view">
+        <h4>Components</h4><span class="path">components/</span>
+        <p>Presentation. Server components by default; <span class="mono">'use client'</span> only for the
+          three things that genuinely need it — the combobox, the map, and the history list.</p>
+        <span class="rule">Rule: render a Report. Never compute one.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02 LIFECYCLE ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Request lifecycle</h2></div>
+    <p class="sec-sub">Overpass takes 2–10 seconds and rate-limits hard. This is the single biggest threat
+      to the thing feeling professional, so the caching and streaming story is settled up front rather than
+      bolted on after it feels slow.</p>
+
+    <div class="dcap">Cold and warm paths for a shared link</div>
+    <pre class="mermaid">
+sequenceDiagram
+  participant U as Visitor
+  participant E as Vercel (RSC)
+  participant C as Data cache
+  participant O as Overpass
+  participant S as Scoring (pure)
+
+  U->>E: GET /a/1600-pennsylvania-ave-nw-dc-dqcjqcp
+  E->>E: parseSlug → geohash7 → lat, lon
+  E->>C: get("amenities:dqcjqcp")
+  alt Warm
+    C-->>E: cached amenities (instant)
+  else Cold
+    E->>O: 9 category queries, in parallel
+    O-->>E: raw OSM elements
+    E->>C: set(24h TTL)
+  end
+  E->>S: score(amenities)
+  S-->>E: all scores (sub-millisecond)
+  E-->>U: HTML shell streams immediately
+  Note over E,U: Each card is its own Suspense boundary,&lt;br/&gt;so demographics arriving late never&lt;br/&gt;blocks the scores from painting
+    </pre>
+
+    <div class="grid g3" style="margin-top:32px">
+      <div class="card">
+        <div class="pill core">Cache keys</div>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--g2)">Everything keys off the same
+          <b>geohash7</b> that lives in the URL. One identifier is the share payload, the cache key and the
+          OG image input.</p>
+      </div>
+      <div class="card">
+        <div class="pill core">TTLs</div>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--g2)">Amenities <b>24 h</b> (shops don't move).
+          Census <b>7 d</b> (annual data). Listing angles <b>indefinite</b> — regenerating per view would
+          burn tokens for no gain.</p>
+      </div>
+      <div class="card">
+        <div class="pill core">Degradation</div>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--g2)">Any single provider failing hides only its
+          own card. A Census outage must never take down a report whose scores already resolved.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 03 FILE STRUCTURE ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>File structure</h2></div>
+    <p class="sec-sub">Split by responsibility, not by technical layer. Every scoring formula gets its own
+      small file — they're independently testable and each stays small enough to hold in your head at once.
+      <span class="mono" style="color:var(--orange)">Orange</span> = phase 1,
+      <span class="mono" style="color:#7fd1a8">green</span> = phase 2, grey = phase 3.</p>
+
+<pre class="tree">
+app/
+  layout.tsx                    <b>root shell, fonts, tokens</b>
+  page.tsx                      <b>search screen</b>
+  a/[slug]/
+    page.tsx                    <b>report — RSC, streams</b>
+    loading.tsx                 <b>skeleton</b>
+    opengraph-image.tsx         <i>OG score card (phase 3)</i>
+  compare/page.tsx              <i>side-by-side (phase 3)</i>
+  methodology/page.tsx          <u>formulas + live values (phase 2)</u>
+  api/
+    autocomplete/route.ts       <b>proxies Mapbox, hides secret token</b>
+    listing-angles/route.ts     <i>Claude call (phase 3)</i>
+
+components/
+  ui/                           <b>Card Button Meter Badge ScoreTile</b>
+  search/
+    AddressSearch.tsx           <b>'use client' — ARIA combobox</b>
+    RecentSearches.tsx          <b>'use client' — localStorage</b>
+  report/
+    ReportHeader.tsx            <b>address + overall score</b>
+    ScoreTiles.tsx              <b>walk / drive / transit / errand</b>
+    ReportMap.tsx               <b>'use client' — Mapbox GL</b>
+    NearbyList.tsx              <b>categorised POIs</b>
+    UrbanSuburbanBar.tsx        <b>index + band label</b>
+    RenterFit.tsx               <u>persona bars (phase 2)</u>
+    FlagList.tsx                <u>green/red + evidence (phase 2)</u>
+    Demographics.tsx            <u>Census card (phase 2)</u>
+    NoisePanel.tsx              <u>road / rail / nightlife (phase 2)</u>
+    SchoolList.tsx              <u>schools (phase 2)</u>
+    ListingAngles.tsx           <i>AI headlines (phase 3)</i>
+
+lib/
+  geo/
+    geohash.ts                  <b>encode / decode</b>
+    slug.ts                     <b>buildSlug / parseSlug</b>
+    distance.ts                 <b>haversine, metresToWalkMinutes</b>
+  providers/
+    mapbox.ts                   <b>suggest() retrieve()</b>
+    overpass.ts                 <b>fetchAmenities() fetchRoadContext()</b>
+    census.ts                   <u>fetchTractDemographics() (phase 2)</u>
+    anthropic.ts                <i>generateListingAngles() (phase 3)</i>
+  scoring/
+    categories.ts               <b>the 9 category tag definitions</b>
+    math.ts                     <b>decay() clamp() norm()</b>
+    walk.ts  drive.ts           <b>one formula per file</b>
+    transit.ts  errand.ts       <b>&nbsp;</b>
+    urbanSuburban.ts            <b>score + band label</b>
+    overall.ts                  <b>location score</b>
+    noise.ts                    <u>road / rail / nightlife (phase 2)</u>
+    signals.ts                  <u>normalised persona inputs (phase 2)</u>
+    personas.ts                 <u>weight vectors + fit() (phase 2)</u>
+    flags.ts                    <u>rule engine (phase 2)</u>
+  report/
+    types.ts                    <b>Report Amenity Scores Flag …</b>
+    buildReport.ts              <b>the orchestrator</b>
+
+tests/
+  scoring/*.test.ts             <b>pure unit tests, fixture-driven</b>
+  fixtures/*.json               <b>recorded Overpass responses</b>
+  e2e/*.spec.ts                 <b>Playwright: search flow + cold share</b>
+</pre>
+  </div>
+</section>
+
+<!-- ===== 04 THE PURE CORE ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Why the core is pure</h2></div>
+    <p class="sec-sub">This is the part of the codebase a reviewer will actually read. Walk Score written
+      as a pure function over a passed-in dataset is testable in microseconds against fixtures; the same
+      logic written inline in a page component with a <span class="mono">fetch</span> in the middle is not
+      testable at all without mocking the network.</p>
+
+    <div class="codewrap">
+      <div class="fname">lib/scoring/walk.ts — the shape every score follows</div>
+      <div id="code-walk"></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <div class="pill ok">What this buys us</div>
+        <ul style="margin:12px 0 0;padding-left:18px;font-size:14px;color:var(--g2)">
+          <li>Tests run in milliseconds with no network and no mocks</li>
+          <li>Calibrating the transit constant <span class="mono">K</span> shows up as a test diff, not a silent score shift</li>
+          <li><span class="mono">opengraph-image</span> reuses the identical scoring path — no drift between the shared card and the page</li>
+          <li>Every formula is reviewable in isolation, which is the point of publishing the methodology</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="pill core">Fixture strategy</div>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--g2)">Record real Overpass responses once for
+          four reference addresses — dense urban, transit suburb, car-dependent suburb, rural — and commit
+          them as JSON. Tests then assert real behaviour against real data shapes, deterministically and
+          offline. These same four fixtures are what calibrate the tuning constants.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 05 PHASES ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Build phases</h2></div>
+    <p class="sec-sub">Three plans, each ending in working deployed software. <b>Phase 1 alone satisfies
+      every line of the challenge</b> — so if you had to submit early at any point, you could. Phases 2 and
+      3 are additive and never restructure phase 1.</p>
+
+    <div class="phase">
+      <div class="phase-h p1"><span class="pill diff">Phase 1</span>
+        <h3>Core flow, live on Vercel</h3><span class="mono" style="font-size:11.5px;color:var(--g3)">satisfies the brief</span></div>
+      <div class="phase-b">
+        <p class="why">Everything the challenge explicitly asks for, deployed and working. Nothing from the
+          differentiator tier — the goal is a real, shareable, tested product as early as possible.</p>
+        <ul class="tasklist">
+          <li><span class="n">1</span><span>Scaffold Next.js 15 + TS strict + Tailwind v4; RentEngine tokens as CSS variables; <code>ui/</code> primitives</span></li>
+          <li><span class="n">2</span><span><code>geo/geohash.ts</code> + <code>geo/slug.ts</code> + <code>geo/distance.ts</code> — round-trip tested first</span></li>
+          <li><span class="n">3</span><span><code>providers/mapbox.ts</code> and the <code>/api/autocomplete</code> proxy that keeps the secret token server-side</span></li>
+          <li><span class="n">4</span><span><code>AddressSearch</code> — debounced ARIA combobox, full keyboard navigation</span></li>
+          <li><span class="n">5</span><span><code>providers/overpass.ts</code> + <code>scoring/categories.ts</code>; record the four fixtures</span></li>
+          <li><span class="n">6</span><span><code>scoring/math.ts</code> then <code>walk.ts</code>, <code>drive.ts</code>, <code>transit.ts</code>, <code>errand.ts</code>, <code>urbanSuburban.ts</code>, <code>overall.ts</code> — TDD, one file at a time</span></li>
+          <li><span class="n">7</span><span><code>report/buildReport.ts</code> — parallel fetch, caching, typed Report</span></li>
+          <li><span class="n">8</span><span><code>/a/[slug]</code> report page with Suspense per card; <code>ScoreTiles</code>, <code>NearbyList</code>, <code>UrbanSuburbanBar</code></span></li>
+          <li><span class="n">9</span><span><code>ReportMap</code> — Mapbox GL, pin, walk-radius ring, categorised markers</span></li>
+          <li><span class="n">10</span><span><code>RecentSearches</code> — localStorage, re-runnable, clearable</span></li>
+          <li><span class="n">11</span><span>Playwright: search→report, and a cold visit to a shared URL in a clean context</span></li>
+          <li><span class="n">12</span><span>GitHub Actions (lint, typecheck, unit, e2e) + Vercel deploy + README with the coverage matrix</span></li>
+        </ul>
+        <div class="gate"><b>Gate:</b> a stranger can open the deployed URL, search an address, get real scores
+          on a real map, and send the link to someone else who sees exactly the same page. Green CI.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h p2"><span class="pill diff">Phase 2</span>
+        <h3>Differentiators</h3><span class="mono" style="font-size:11.5px;color:var(--g2)">where it stops looking like a demo</span></div>
+      <div class="phase-b">
+        <p class="why">The interpretation layer. All of it builds on the phase-1 scoring core without
+          modifying it — new files, new cards, no restructuring.</p>
+        <ul class="tasklist">
+          <li><span class="n">1</span><span><code>scoring/noise.ts</code> — road / rail / nightlife proxies + <code>NoisePanel</code></span></li>
+          <li><span class="n">2</span><span><code>providers/census.ts</code> — Census Geocoder → tract FIPS → ACS; <code>Demographics</code> card</span></li>
+          <li><span class="n">3</span><span><code>SchoolList</code> — real name/level/distance, ratings visibly labelled as modelled</span></li>
+          <li><span class="n">4</span><span><code>scoring/signals.ts</code> — normalise every input to <span class="mono">[0,1]</span></span></li>
+          <li><span class="n">5</span><span><code>scoring/personas.ts</code> — the five weight vectors; test that each sums to 1.0</span></li>
+          <li><span class="n">6</span><span><code>RenterFit</code> — persona bars, expandable to show contributing signals</span></li>
+          <li><span class="n">7</span><span><code>scoring/flags.ts</code> — declarative rules, each carrying its evidence string</span></li>
+          <li><span class="n">8</span><span><code>FlagList</code> + the 15-minute check UI showing which needs are and aren't met</span></li>
+          <li><span class="n">9</span><span><code>/methodology</code> — every formula rendered beside the live values for the address in view</span></li>
+        </ul>
+        <div class="gate"><b>Gate:</b> the report answers “who is this unit for” with visible reasoning, and
+          every derived number links to its formula.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-h p3"><span class="pill stretch">Phase 3</span>
+        <h3>Polish</h3><span class="mono" style="font-size:11.5px;color:var(--g2)">portfolio finish</span></div>
+      <div class="phase-b">
+        <p class="why">Independent of each other, so any one can be dropped without consequence.</p>
+        <ul class="tasklist">
+          <li><span class="n">1</span><span><code>opengraph-image.tsx</code> — branded score card at the edge, reusing the same scoring path</span></li>
+          <li><span class="n">2</span><span><code>/compare</code> — two reports side by side</span></li>
+          <li><span class="n">3</span><span><code>providers/anthropic.ts</code> + <code>ListingAngles</code> — schema-forced, cached, and invisible when the key is absent</span></li>
+          <li><span class="n">4</span><span>Accessibility and Lighthouse pass; empty, error and rural-low-data states audited</span></li>
+        </ul>
+        <div class="gate"><b>Gate:</b> shared links unfurl as branded cards; the deployed site works fully
+          even with no Anthropic key configured.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 06 DECISIONS ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Four calls I'd like you to make</h2></div>
+    <p class="sec-sub">My recommendation is pre-selected on each. Change any you disagree with — these are
+      genuine forks, not rhetorical ones.</p>
+
+    <form data-lavish-question="tech" onsubmit="return qTech(event)">
+
+      <div class="dq">
+        <div class="qt">Decision 1 · Overpass reliability</div>
+        <h4>The public Overpass API is the biggest single risk to this feeling professional</h4>
+        <div class="oq">
+          <label><input type="radio" name="overpass" value="fallback" checked>
+            <span><b>Multi-endpoint fallback + aggressive cache <span class="pill diff">Recommended</span></b>
+              <span class="d">Try three public mirrors in sequence, cache hard, and pre-warm a handful of demo
+              addresses at build time so anything a reviewer is likely to type is instant. No infrastructure to run.</span></span></label>
+          <label><input type="radio" name="overpass" value="single">
+            <span><b>Single endpoint, cache only</b>
+              <span class="d">Simpler. But one mirror having a bad day means your live demo looks broken during review.</span></span></label>
+          <label><input type="radio" name="overpass" value="selfhost">
+            <span><b>Self-host an Overpass instance</b>
+              <span class="d">Bulletproof and genuinely impressive, but it's a multi-hour infra detour plus ongoing
+              cost, and it isn't what's being assessed.</span></span></label>
+        </div>
+      </div>
+
+      <div class="dq">
+        <div class="qt">Decision 2 · Styling</div>
+        <h4>Tailwind v4 or CSS Modules?</h4>
+        <div class="oq">
+          <label><input type="radio" name="css" value="tw" checked>
+            <span><b>Tailwind v4 with the RentEngine tokens as CSS variables <span class="pill diff">Recommended</span></b>
+              <span class="d">What a reviewer expects to see, fast to build in, and v4's <span class="mono">@theme</span>
+              maps their token set cleanly. Tokens stay readable as <span class="mono">--color-accent</span> rather than magic hexes.</span></span></label>
+          <label><input type="radio" name="css" value="modules">
+            <span><b>CSS Modules</b>
+              <span class="d">Cleaner markup, more deliberate. But slower to iterate and slightly unusual for a
+              greenfield Next.js project in 2026.</span></span></label>
+        </div>
+      </div>
+
+      <div class="dq">
+        <div class="qt">Decision 3 · Repo history</div>
+        <h4>You didn't answer this last time — it's worth deciding before we start committing</h4>
+        <div class="oq">
+          <label><input type="radio" name="git" value="pr" checked>
+            <span><b>Branch per phase, merged via PR <span class="pill diff">Recommended</span></b>
+              <span class="d">Three clean PRs with real descriptions. On a take-home the git history is part of
+              what's being read, and “how does this person work” is easier to answer from PRs than from a flat log.</span></span></label>
+          <label><input type="radio" name="git" value="main">
+            <span><b>Straight to main</b>
+              <span class="d">Faster, less ceremony. Fine for solo work, but forfeits a free signal.</span></span></label>
+        </div>
+      </div>
+
+      <div class="dq">
+        <div class="qt">Decision 4 · How I execute</div>
+        <h4>Phase 1 is 12 tasks. Do you want to review between each one?</h4>
+        <div class="oq">
+          <label><input type="radio" name="exec" value="subagent" checked>
+            <span><b>Fresh subagent per task, I review between <span class="pill diff">Recommended</span></b>
+              <span class="d">Each task gets a clean context and a review gate before the next starts. Catches drift
+              early and keeps quality high across a long build. Slower per task, better end result.</span></span></label>
+          <label><input type="radio" name="exec" value="inline">
+            <span><b>Inline, batched with checkpoints</b>
+              <span class="d">I work straight through phase 1 and stop at a few checkpoints. Faster, but a mistake
+              in task 3 can propagate to task 9 before either of us sees it.</span></span></label>
+        </div>
+      </div>
+
+      <div class="qbox">
+        <h4>Send these and I'll write the phase 1 plan</h4>
+        <p class="hint">I'll write the detailed plan for phase 1 only — full TDD steps, real test code, exact
+          file paths. Phases 2 and 3 get their own plans when we reach them, so we're never executing against
+          a stale document.</p>
+        <textarea class="free" name="note" placeholder="Anything about the architecture you'd change? Annotate the diagrams above for anything specific."></textarea>
+        <div style="margin-top:14px"><button type="submit" class="qbtn">Send &amp; write phase 1</button><span class="qstat" id="s-tech"></span></div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== 07 WHAT I NEED ===== -->
+<section style="background:var(--g5)">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>What I need from you</h2></div>
+    <p class="sec-sub">Two of these block phase 1. The rest can wait until the phase that needs them.</p>
+
+    <div class="tscroll" style="background:#fff"><table>
+      <thead><tr><th>Item</th><th>Where to get it</th><th>Needed by</th></tr></thead>
+      <tbody>
+        <tr><td><b>Mapbox access token</b></td>
+          <td>account.mapbox.com → Tokens. Free tier, no card. Create <em>two</em>: one public URL-restricted
+            for the map, one secret for Search Box.</td>
+          <td><span class="badge b-comp">Phase 1 · task 3</span></td></tr>
+        <tr><td><b>GitHub repo</b></td>
+          <td>Public repo. I can create and push it with <span class="mono">gh</span> if you'd like — say so.</td>
+          <td><span class="badge b-comp">Phase 1 · task 12</span></td></tr>
+        <tr><td><b>Vercel project</b></td>
+          <td>Import the GitHub repo at vercel.com. Free tier is ample.</td>
+          <td><span class="badge b-comp">Phase 1 · task 12</span></td></tr>
+        <tr><td><b>Census API key</b></td>
+          <td>api.census.gov/data/key_signup.html — instant and free.</td>
+          <td><span class="badge b-blue">Phase 2 · task 2</span></td></tr>
+        <tr><td><b>Anthropic API key</b></td>
+          <td>console.anthropic.com. Costs a few cents at demo volume.</td>
+          <td><span class="badge b-blue">Phase 3 · task 3</span></td></tr>
+        <tr><td><b>The product's name</b></td>
+          <td>Mockups use “addressinsights” as a placeholder. Your call — it's on every screen and in the
+            deploy URL, so worth picking deliberately.</td>
+          <td><span class="badge b-comp">Phase 1 · task 1</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="qbox" style="background:#fff">
+      <h4>Naming</h4>
+      <p class="hint">The one thing above that isn't just admin. A neutral own-brand name was decided in
+        review 01, so it shouldn't contain “RentEngine”.</p>
+      <form data-lavish-question="name" onsubmit="return qName(event)">
+        <textarea class="free" name="name" placeholder="A name — or 'you pick' and I'll propose three with the reasoning"></textarea>
+        <div style="margin-top:14px"><button type="submit" class="qbtn">Send name</button><span class="qstat" id="s-name"></span></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>After this:</b> the phase 1 plan lands in <span class="mono">docs/superpowers/plans/</span> with full
+    TDD steps and real test code, then execution begins under whichever mode you pick in decision 4.
+  </div>
+</footer>
+
+<script type="module">
+  import { File } from "https://esm.sh/@pierre/diffs@1.2.10?bundle";
+  const src = `import { CATEGORIES, type Amenity } from './categories';
+import { clamp, decay } from './math';
+
+const RADIUS_M = 2000;
+const DECAY_SCALE = 2400;
+const POSITION_WEIGHTS = [1.0, 0.5, 0.25];
+
+/**
+ * Walk Score for a point, given amenities already fetched for it.
+ *
+ * Pure: no I/O, no clock, no randomness. Same dataset always
+ * yields the same score, which is what makes it testable and
+ * safe to reuse from the OG image route.
+ */
+export function walkScore(
+  amenities: Amenity[],
+  intersectionsWithin1km: number,
+): number {
+  let weighted = 0;
+  let totalWeight = 0;
+
+  for (const category of CATEGORIES) {
+    const nearest = amenities
+      .filter((a) => a.category === category.id && a.distanceM <= RADIUS_M)
+      .sort((a, b) => a.distanceM - b.distanceM)
+      .slice(0, POSITION_WEIGHTS.length);
+
+    const categoryScore = nearest.reduce(
+      (sum, a, i) => sum + decay(a.distanceM, DECAY_SCALE) * POSITION_WEIGHTS[i],
+      0,
+    );
+
+    weighted += categoryScore * category.weight;
+    totalWeight += category.weight;
+  }
+
+  // A walkable grid beats a cul-de-sac with the same raw amenity count.
+  const penalty = clamp((30 - intersectionsWithin1km) / 200, 0, 0.15);
+  const raw = totalWeight === 0 ? 0 : weighted / totalWeight;
+
+  return clamp(Math.round(raw * 100 * (1 - penalty)), 0, 100);
+}
+`;
+  new File({
+    theme: { light: "github-dark", dark: "github-dark" },
+    themeType: "dark",
+    overflow: "wrap",
+  }).render({
+    containerWrapper: document.querySelector("#code-walk"),
+    file: { name: "lib/scoring/walk.ts", contents: src },
+  });
+</script>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs";
+  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const paint = document.createElement("canvas").getContext("2d");
+  function toRgba(color){paint.clearRect(0,0,1,1);paint.fillStyle="#000";paint.fillStyle=color;
+    paint.fillRect(0,0,1,1);return paint.getImageData(0,0,1,1).data;}
+  function compositeRgba(f,b){const fa=f[3]/255,ba=b[3]/255,a=fa+ba*(1-fa);
+    if(a===0)return[0,0,0,0];
+    return[(f[0]*fa+b[0]*ba*(1-fa))/a,(f[1]*fa+b[1]*ba*(1-fa))/a,(f[2]*fa+b[2]*ba*(1-fa))/a,a*255];}
+  function pageIsDark(){const root=document.documentElement;
+    const rb=toRgba(getComputedStyle(root).backgroundColor);
+    const bb=document.body?toRgba(getComputedStyle(document.body).backgroundColor):[0,0,0,0];
+    const [r,g,b,a]=compositeRgba(bb,rb);
+    if(a>0)return (0.2126*r+0.7152*g+0.0722*b)/255<0.5;
+    const cs=getComputedStyle(root).colorScheme;
+    if(cs.includes("dark")&&!cs.includes("light"))return true;
+    if(cs.includes("light")&&!cs.includes("dark"))return false;
+    return darkQuery.matches;}
+  const diagrams=[...document.querySelectorAll(".mermaid")].map(el=>({el,src:el.textContent}));
+  let applied,rendering=false,queued=false;
+  function queueRender(){queued=true;if(rendering)return;void render();}
+  async function render(){rendering=true;
+    try{while(queued){queued=false;const theme=pageIsDark()?"dark":"default";
+      if(theme===applied)continue;
+      mermaid.initialize({startOnLoad:false,theme,securityLevel:"strict"});
+      for(const {el,src} of diagrams){el.removeAttribute("data-processed");el.textContent=src;}
+      try{await mermaid.run({nodes:diagrams.map(d=>d.el)});}
+      catch(e){console.error("Mermaid render failed:",e);return;}
+      applied=theme;}}
+    finally{rendering=false;if(queued)queueRender();}}
+  if(document.readyState==="complete")queueRender();
+  else window.addEventListener("load",queueRender,{once:true});
+  const obs=new MutationObserver(queueRender);
+  for(const el of [document.documentElement,document.body]){if(!el)continue;
+    obs.observe(el,{attributes:true,attributeFilter:["data-theme","class","style"]});}
+  document.addEventListener("change",queueRender,true);
+  darkQuery.addEventListener("change",queueRender);
+</script>
+
+<script>
+function q(msg,opts){if(window.lavish&&window.lavish.queuePrompt)window.lavish.queuePrompt(msg,opts);}
+function done(id,t){var e=document.getElementById(id);if(e)e.textContent=t||'✓ queued';}
+
+function qTech(ev){
+  ev.preventDefault();
+  var fd=new FormData(ev.currentTarget);
+  var o=fd.get('overpass'), c=fd.get('css'), g=fd.get('git'), x=fd.get('exec'), n=(fd.get('note')||'').trim();
+  var O={fallback:'multi-endpoint fallback + aggressive caching + pre-warmed demo addresses',
+         single:'single Overpass endpoint with caching only',
+         selfhost:'self-host an Overpass instance'};
+  var C={tw:'Tailwind v4 with RentEngine tokens as CSS variables',modules:'CSS Modules'};
+  var G={pr:'branch per phase, merged via PR',main:'commit straight to main'};
+  var X={subagent:'subagent-driven — fresh subagent per task with review between',
+         inline:'inline execution, batched with checkpoints'};
+  var p=[];
+  if(o)p.push('Overpass: '+O[o]);
+  if(c)p.push('Styling: '+C[c]);
+  if(g)p.push('Git: '+G[g]);
+  if(x)p.push('Execution: '+X[x]);
+  if(n)p.push('Note: '+n);
+  if(!p.length){done('s-tech','Answer at least one');return false;}
+  q('Implementation decisions.\n- '+p.join('\n- '),
+    {tag:'decisions',text:'Tech decisions — ready for phase 1 plan',queueKey:'tech',
+     element:ev.currentTarget,data:{question:'tech',overpass:o,css:c,git:g,exec:x,note:n}});
+  done('s-tech','✓ queued — press Send to Agent');return false;
+}
+
+function qName(ev){
+  ev.preventDefault();
+  var v=(new FormData(ev.currentTarget).get('name')||'').trim();
+  if(!v){done('s-name','Type something first');return false;}
+  q('Product name: '+v,{tag:'decision',text:'Name: '+v,queueKey:'name',
+    element:ev.currentTarget,data:{question:'name',answer:v}});
+  done('s-name');return false;
+}
+</script>

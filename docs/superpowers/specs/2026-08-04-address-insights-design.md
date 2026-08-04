@@ -339,8 +339,13 @@ same geohash and renders the score card at the edge.
 
 ## 8. Non-functional requirements
 
-- **Streaming.** Scores appear as they resolve rather than blocking on the slowest Overpass query.
-  A cold report must never look frozen.
+- **Streaming.** A cold report must never look frozen. Route-level streaming via `loading.tsx`
+  paints a skeleton immediately, and `Promise.allSettled` across providers means a slow transit or
+  demographics query never delays the amenity-derived scores.
+  *(Revised 2026-08-04: an earlier draft called for per-card Suspense boundaries. In Phase 1 all four
+  scores derive from the same amenity fetch and therefore resolve together, so per-card boundaries
+  would add complexity for no perceptible gain. They become worthwhile in Phase 2, when Census
+  demographics arrive on an independent request.)*
 - **Caching.** Edge cache keyed on coordinates rounded to ~4 decimal places. Overpass is slow
   (2–10 s) and aggressively rate-limited; repeat lookups of the same address must be instant.
 - **Shareable pages are server-rendered.** A cold visitor with no `localStorage` sees exactly what
