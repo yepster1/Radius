@@ -2603,6 +2603,22 @@ describe('AddressSearch', () => {
     expect(push.mock.calls[0][0]).toContain('1600-pennsylvania-ave-se');
   });
 
+  it('does not re-query after a selection', async () => {
+    const user = userEvent.setup();
+    render(<AddressSearch />);
+    await user.type(screen.getByRole('combobox'), '1600 Penn');
+    await user.click(await screen.findByText('1600 Pennsylvania Avenue NW'));
+    await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
+
+    const suggestCalls = () =>
+      vi.mocked(fetch).mock.calls.filter(([u]) => String(u).includes('q=')).length;
+    const before = suggestCalls();
+    // Longer than the 250 ms debounce: a stale re-query would land in this window.
+    await new Promise((r) => setTimeout(r, 500));
+    expect(suggestCalls()).toBe(before);
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
   it('closes the list on Escape', async () => {
     const user = userEvent.setup();
     render(<AddressSearch />);
@@ -2644,10 +2660,24 @@ export function AddressSearch() {
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
 
-  // One session token per widget instance — Mapbox bills per session, not per keystroke.
-  const session = useRef(crypto.randomUUID());
+  // One session token per widget instance — Mapbox bills per session, not per
+  // keystroke. Lazily initialised: `useRef(crypto.randomUUID())` would call it
+  // on every render and discard the result, and it throws outside a secure context.
+  const session = useRef<string | null>(null);
+  if (session.current === null) session.current = crypto.randomUUID();
+
+  // Set when `select` rewrites the query, so the debounce effect skips the run
+  // that change triggers. Without it every selection fires one more billable
+  // autocomplete call and can reopen the list with stale results after the
+  // user has already chosen.
+  const skipNextQuery = useRef(false);
 
   useEffect(() => {
+    if (skipNextQuery.current) {
+      skipNextQuery.current = false;
+      return;
+    }
+
     if (query.trim().length < MIN_QUERY) {
       setSuggestions([]);
       setOpen(false);
@@ -2680,18 +2710,27 @@ export function AddressSearch() {
   const select = useCallback(
     async (suggestion: AddressSuggestion) => {
       setOpen(false);
+      skipNextQuery.current = true;
       setQuery(suggestion.primary);
 
-      const res = await fetch(
-        `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
-      );
-      if (!res.ok) return;
+      try {
+        const res = await fetch(
+          `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
+        );
+        if (!res.ok) return;
 
-      const { address, lat, lon } = (await res.json()) as {
-        address: string; lat: number; lon: number;
-      };
+        const { lat, lon } = (await res.json()) as { lat: number; lon: number };
 
-      router.push(`/a/${buildSlug(address || suggestion.primary, lat, lon)}`);
+        // The slug's readable half is decorative — the report page reverse-geocodes
+        // the coordinates for the canonical address — so the text the user actually
+        // clicked is the honest thing to put here.
+        const label = [suggestion.primary, suggestion.secondary]
+          .filter(Boolean)
+          .join(' ');
+        router.push(`/a/${buildSlug(label, lat, lon)}`);
+      } catch {
+        // Network failure or malformed JSON: stay put rather than reject unhandled.
+      }
     },
     [router],
   );
