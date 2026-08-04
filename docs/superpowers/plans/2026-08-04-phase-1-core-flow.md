@@ -41,7 +41,7 @@
 | `lib/geo/slug.ts` | `buildSlug`, `parseSlug` | 2 |
 | `lib/report/types.ts` | `Coordinates`, `Amenity`, `Scores`, `Report`, `AddressSuggestion` | 3 |
 | `lib/scoring/math.ts` | `clamp`, `decay`, `norm` | 3 |
-| `lib/scoring/junctions.ts` | `countJunctions` — true degree-2+ node count | 4 |
+| `lib/geo/junctions.ts` | `countJunctions` — shared-node count, used by the urban/suburban index only | 4 |
 | `lib/scoring/categories.ts` | The 9 categories, their OSM tags and weights | 3 |
 | `lib/providers/overpass.ts` | `fetchAmenities`, `fetchStreetContext` — I/O only | 4 |
 | `tests/fixtures/*.json` | Four recorded Overpass responses | 4 |
@@ -1368,12 +1368,13 @@ out count;`;
       | undefined;
 
     return {
-      intersectionsWithin1km: Number(counts?.tags?.nodes ?? 0),
+      intersectionsWithin1km: countJunctions(ways),
       buildingsWithin500m: Number(counts?.tags?.ways ?? 0),
+      available: true,
     };
   } catch {
     // Street context is a refinement, not a requirement — degrade to neutral.
-    return { intersectionsWithin1km: 30, buildingsWithin500m: 0 };
+    return { intersectionsWithin1km: 30, buildingsWithin500m: 0, available: false };
   }
 }
 ```
@@ -1400,7 +1401,7 @@ git commit -m "feat: Overpass provider with multi-endpoint fallback and recorded
 
 **Interfaces:**
 - Consumes: `CATEGORIES` (Task 3), `clamp`/`decay` (Task 3), `Amenity` (Task 3), fixtures (Task 4)
-- Produces: `walkScore(amenities: Amenity[], intersectionsWithin1km: number): number`
+- Produces: `walkScore(amenities: Amenity[]): number`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1425,36 +1426,36 @@ const amenity = (over: Partial<Amenity>): Amenity => ({
 
 describe('walkScore', () => {
   it('returns 0 when there are no amenities', () => {
-    expect(walkScore([], 40)).toBe(0);
+    expect(walkScore([])).toBe(0);
   });
 
   it('scores a dense urban address highly', () => {
-    const score = walkScore(parseAmenityElements(denseUrban.elements, DC), 90);
+    const score = walkScore(parseAmenityElements(denseUrban.elements, DC));
     expect(score).toBeGreaterThan(75);
     expect(score).toBeLessThanOrEqual(100);
   });
 
   it('scores a car-dependent suburb well below a dense city', () => {
-    const urban = walkScore(parseAmenityElements(denseUrban.elements, DC), 90);
-    const suburb = walkScore(parseAmenityElements(carDependent.elements, TX), 20);
+    const urban = walkScore(parseAmenityElements(denseUrban.elements, DC));
+    const suburb = walkScore(parseAmenityElements(carDependent.elements, TX));
     expect(suburb).toBeLessThan(urban);
   });
 
   it('scores a rural address low', () => {
-    expect(walkScore(parseAmenityElements(rural.elements, VT), 8)).toBeLessThan(35);
+    expect(walkScore(parseAmenityElements(rural.elements, VT))).toBeLessThan(35);
   });
 
   it('never exceeds 100 even with hundreds of adjacent amenities', () => {
     const many = Array.from({ length: 400 }, (_, i) =>
       amenity({ id: i, category: 'dining', distanceM: 20 }),
     );
-    expect(walkScore(many, 120)).toBeLessThanOrEqual(100);
+    expect(walkScore(many)).toBeLessThanOrEqual(100);
   });
 
   it('rewards a closer amenity over a further one', () => {
     const near = [amenity({ distanceM: 100 })];
     const far = [amenity({ distanceM: 1800 })];
-    expect(walkScore(near, 40)).toBeGreaterThan(walkScore(far, 40));
+    expect(walkScore(near)).toBeGreaterThan(walkScore(far));
   });
 
   it('rewards category variety over repetition of one category', () => {
@@ -1467,22 +1468,14 @@ describe('walkScore', () => {
     const repetitive: Amenity[] = [1, 2, 3, 4].map((id) =>
       amenity({ id, category: 'grocery', distanceM: 300 }),
     );
-    expect(walkScore(varied, 40)).toBeGreaterThan(walkScore(repetitive, 40));
-  });
-
-  it('applies an intersection penalty to a low-connectivity street network', () => {
-    const set = [
-      amenity({ id: 1, category: 'grocery', distanceM: 300 }),
-      amenity({ id: 2, category: 'cafe', distanceM: 400 }),
-    ];
-    expect(walkScore(set, 5)).toBeLessThan(walkScore(set, 100));
+    expect(walkScore(varied)).toBeGreaterThan(walkScore(repetitive));
   });
 
   it('ignores amenities beyond the 2km radius', () => {
     const inside = [amenity({ distanceM: 1900 })];
     const outside = [amenity({ distanceM: 2100 })];
-    expect(walkScore(outside, 40)).toBe(0);
-    expect(walkScore(inside, 40)).toBeGreaterThan(0);
+    expect(walkScore(outside)).toBe(0);
+    expect(walkScore(inside)).toBeGreaterThan(0);
   });
 });
 ```
@@ -1508,8 +1501,15 @@ const POSITION_WEIGHTS = [1.0, 0.5, 0.25];
  *
  * Pure: no I/O, no clock, no randomness. The same dataset always yields the
  * same score, which is what makes it testable and safe to reuse elsewhere.
+ *
+ * An intersection-density penalty was specified here and then removed. Measured
+ * across the four reference points, junctions/km2 came out: rural 0, car-dependent
+ * suburb 238, dense urban 439, transit suburb 507. No threshold separates walkable
+ * from car-dependent, and the leafy transit suburb outranks downtown DC. OSM splits
+ * ways on tagging changes unrelated to street topology, so the proxy measures
+ * bookkeeping as much as connectivity. Documented on /methodology.
  */
-export function walkScore(amenities: Amenity[], intersectionsWithin1km: number): number {
+export function walkScore(amenities: Amenity[]): number {
   let weighted = 0;
   let totalWeight = 0;
 
@@ -1530,11 +1530,7 @@ export function walkScore(amenities: Amenity[], intersectionsWithin1km: number):
 
   if (totalWeight === 0) return 0;
 
-  // A connected grid beats a cul-de-sac with the same raw amenity count.
-  const penalty = clamp((30 - intersectionsWithin1km) / 200, 0, 0.15);
-  const raw = weighted / totalWeight;
-
-  return clamp(Math.round(raw * 100 * (1 - penalty)), 0, 100);
+  return clamp(Math.round((weighted / totalWeight) * 100), 0, 100);
 }
 ```
 
@@ -1598,7 +1594,7 @@ describe('driveScore', () => {
       amenity({ id: 2, category: 'retail', distanceM: 6000 }),
       amenity({ id: 3, category: 'errands', distanceM: 4500 }),
     ];
-    expect(walkScore(far, 40)).toBe(0);
+    expect(walkScore(far)).toBe(0);
     expect(driveScore(far)).toBeGreaterThan(0);
   });
 
@@ -1854,7 +1850,12 @@ Create `tests/scoring/urbanSuburban.test.ts`:
 ```ts
 import { describe, expect, it } from 'vitest';
 import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
-import type { Amenity } from '@/lib/report/types';
+import { parseAmenityElements, type OverpassElement } from '@/lib/providers/overpass';
+import type { Amenity, Coordinates } from '@/lib/report/types';
+import denseUrban from '../fixtures/dense-urban.json';
+import suburbanTransit from '../fixtures/suburban-transit.json';
+import carDependent from '../fixtures/car-dependent.json';
+import rural from '../fixtures/rural.json';
 
 const many = (count: number): Amenity[] =>
   Array.from({ length: count }, (_, i) => ({
@@ -1864,7 +1865,7 @@ const many = (count: number): Amenity[] =>
 describe('urbanSuburbanIndex', () => {
   it('labels an empty area Rural', () => {
     const { index, band } = urbanSuburbanIndex([], {
-      intersectionsWithin1km: 2, buildingsWithin500m: 3,
+      intersectionsWithin1km: 2, buildingsWithin500m: 3, available: true,
     });
     expect(index).toBeLessThanOrEqual(25);
     expect(band).toBe('Rural');
@@ -1872,7 +1873,7 @@ describe('urbanSuburbanIndex', () => {
 
   it('labels a saturated area Dense Urban', () => {
     const { index, band } = urbanSuburbanIndex(many(200), {
-      intersectionsWithin1km: 160, buildingsWithin500m: 600,
+      intersectionsWithin1km: 460, buildingsWithin500m: 600, available: true,
     });
     expect(index).toBeGreaterThan(75);
     expect(band).toBe('Dense Urban');
@@ -1880,7 +1881,7 @@ describe('urbanSuburbanIndex', () => {
 
   it('places a moderate area in a middle band', () => {
     const { band } = urbanSuburbanIndex(many(50), {
-      intersectionsWithin1km: 45, buildingsWithin500m: 150,
+      intersectionsWithin1km: 240, buildingsWithin500m: 150, available: true,
     });
     expect(['Suburban', 'Urban']).toContain(band);
   });
@@ -1889,17 +1890,52 @@ describe('urbanSuburbanIndex', () => {
     const far: Amenity[] = Array.from({ length: 200 }, (_, i) => ({
       id: i, name: 'A', category: 'dining' as const, lat: 0, lon: 0, distanceM: 1500,
     }));
-    const near = urbanSuburbanIndex(many(200), { intersectionsWithin1km: 0, buildingsWithin500m: 0 });
-    const distant = urbanSuburbanIndex(far, { intersectionsWithin1km: 0, buildingsWithin500m: 0 });
+    const near = urbanSuburbanIndex(many(200), { intersectionsWithin1km: 0, buildingsWithin500m: 0, available: true });
+    const distant = urbanSuburbanIndex(far, { intersectionsWithin1km: 0, buildingsWithin500m: 0, available: true });
     expect(distant.index).toBeLessThan(near.index);
   });
 
   it('always returns an index within 0-100', () => {
     const { index } = urbanSuburbanIndex(many(5000), {
-      intersectionsWithin1km: 9999, buildingsWithin500m: 9999,
+      intersectionsWithin1km: 9999, buildingsWithin500m: 9999, available: true,
     });
     expect(index).toBeGreaterThanOrEqual(0);
     expect(index).toBeLessThanOrEqual(100);
+  });
+
+  it('renormalises over amenity density alone when street data is unavailable', () => {
+    const withStreet = urbanSuburbanIndex(many(200), {
+      intersectionsWithin1km: 450, buildingsWithin500m: 380, available: true,
+    });
+    const without = urbanSuburbanIndex(many(200), {
+      intersectionsWithin1km: 30, buildingsWithin500m: 0, available: false,
+    });
+    // Placeholder zeros must not drag a dense address toward suburban.
+    expect(without.index).toBeGreaterThan(70);
+    expect(Math.abs(without.index - withStreet.index)).toBeLessThan(35);
+  });
+
+  it('ranks the four reference locations sensibly on real fixture data', () => {
+    // The assertion that matters: does the index order real places correctly?
+    // Street data is marked unavailable so this exercises amenity density,
+    // the one signal measurement showed to be reliable.
+    const noStreet = {
+      intersectionsWithin1km: 30, buildingsWithin500m: 0, available: false,
+    };
+    const score = (elements: unknown[], origin: Coordinates) =>
+      urbanSuburbanIndex(
+        parseAmenityElements(elements as OverpassElement[], origin),
+        noStreet,
+      ).index;
+
+    const dc = score(denseUrban.elements, { lat: 38.8977, lon: -77.0365 });
+    const brookline = score(suburbanTransit.elements, { lat: 42.3736, lon: -71.1097 });
+    const plano = score(carDependent.elements, { lat: 33.0198, lon: -96.6989 });
+    const vt = score(rural.elements, { lat: 44.2159, lon: -73.274 });
+
+    expect(vt).toBeLessThan(plano);
+    expect(plano).toBeLessThan(Math.min(dc, brookline));
+    expect(vt).toBeLessThan(20);
   });
 });
 ```
@@ -1913,7 +1949,10 @@ import { clamp, norm } from './math';
 import type { Amenity, StreetContext, UrbanBand } from '@/lib/report/types';
 
 const AMENITY_CAP = 150;
-const INTERSECTION_CAP = 120;
+// Measured across the four reference points: rural 0, car-dependent 238,
+// dense urban 439, transit suburb 507. A cap of 120 saturated three of the
+// four, collapsing the term to a rural/non-rural switch.
+const INTERSECTION_CAP = 500;
 const BUILDING_CAP = 400;
 
 function bandFor(index: number): UrbanBand {
@@ -2676,7 +2715,7 @@ beforeEach(() => {
     { id: 1, name: 'Metro Center', mode: 'rail', routeCount: 3, distanceM: 400 },
   ]);
   vi.mocked(overpass.fetchStreetContext).mockResolvedValue({
-    intersectionsWithin1km: 95, buildingsWithin500m: 320,
+    intersectionsWithin1km: 439, buildingsWithin500m: 320, available: true,
   });
 });
 
@@ -2707,7 +2746,7 @@ describe('buildReport', () => {
   it('still produces a report when street context fails', async () => {
     vi.mocked(overpass.fetchStreetContext).mockRejectedValue(new Error('down'));
     const report = await buildReport('x', DC);
-    expect(report.street.intersectionsWithin1km).toBe(30);
+    expect(report.street.available).toBe(false);
     expect(report.scores.walk).toBeGreaterThan(0);
   });
 
@@ -2778,7 +2817,7 @@ export async function buildReport(
   const street: StreetContext =
     streetResult.status === 'fulfilled' ? streetResult.value : NEUTRAL_STREET;
 
-  const walk = walkScore(amenities, street.intersectionsWithin1km);
+  const walk = walkScore(amenities);
   const drive = driveScore(amenities);
   const transit = transitScore(transitStops);
   const errand = errandScore(amenities);
