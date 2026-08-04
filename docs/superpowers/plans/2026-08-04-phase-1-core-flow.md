@@ -997,7 +997,16 @@ export type Report = {
   street: StreetContext;
   fifteenMinute: { met: CategoryId[]; missing: CategoryId[] };
   dataSparse: boolean;
+  /**
+   * Sources whose lookup failed. Their scores are 0 because we could not ask,
+   * not because the answer is 0 — a distinction the UI must surface rather than
+   * render a confident zero. `street.available` is the granular flag scoring
+   * consumes; this is the report-level list the page renders from.
+   */
+  unavailable: DataSource[];
 };
+
+export type DataSource = 'transit' | 'street';
 
 export type AddressSuggestion = {
   mapboxId: string;
@@ -2909,6 +2918,7 @@ describe('buildReport', () => {
     expect(report.scores.overall).toBeGreaterThan(0);
     expect(report.amenities.length).toBeGreaterThan(0);
     expect(report.fifteenMinute.met.length + report.fifteenMinute.missing.length).toBe(9);
+    expect(report.unavailable).toEqual([]);
   });
 
   it('fetches amenities at the 8km drive radius, not 2km', async () => {
@@ -2921,12 +2931,28 @@ describe('buildReport', () => {
     const report = await buildReport('x', DC);
     expect(report.scores.transit).toBe(0);
     expect(report.scores.walk).toBeGreaterThan(0);
+    expect(report.unavailable).toContain('transit');
+  });
+
+  it('distinguishes a failed transit lookup from a genuine absence of transit', async () => {
+    // Both yield transit: 0. Only the failure is a claim we cannot make, so
+    // only the failure may be reported as unavailable.
+    vi.mocked(overpass.fetchTransitStops).mockResolvedValue([]);
+    const genuinelyEmpty = await buildReport('x', DC);
+    expect(genuinelyEmpty.scores.transit).toBe(0);
+    expect(genuinelyEmpty.unavailable).not.toContain('transit');
+
+    vi.mocked(overpass.fetchTransitStops).mockRejectedValue(new Error('down'));
+    const failed = await buildReport('x', DC);
+    expect(failed.scores.transit).toBe(0);
+    expect(failed.unavailable).toContain('transit');
   });
 
   it('still produces a report when street context fails', async () => {
     vi.mocked(overpass.fetchStreetContext).mockRejectedValue(new Error('down'));
     const report = await buildReport('x', DC);
     expect(report.street.available).toBe(false);
+    expect(report.unavailable).toContain('street');
     expect(report.scores.walk).toBeGreaterThan(0);
   });
 
@@ -2962,7 +2988,9 @@ import { overallScore } from '@/lib/scoring/overall';
 import { transitScore } from '@/lib/scoring/transit';
 import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
 import { walkScore } from '@/lib/scoring/walk';
-import type { Coordinates, Report, StreetContext, TransitStop } from '@/lib/report/types';
+import type {
+  Coordinates, DataSource, Report, StreetContext, TransitStop,
+} from '@/lib/report/types';
 
 /** Fetch at the widest radius any score needs, then let each score filter down. */
 const FETCH_RADIUS_M = 8000;
@@ -2992,10 +3020,15 @@ export async function buildReport(
   const amenities = amenityResult.value;
 
   // Transit and street context are refinements; degrade rather than fail.
+  const unavailable: DataSource[] = [];
+
   const transitStops: TransitStop[] =
     transitResult.status === 'fulfilled' ? transitResult.value : [];
+  if (transitResult.status === 'rejected') unavailable.push('transit');
+
   const street: StreetContext =
     streetResult.status === 'fulfilled' ? streetResult.value : NEUTRAL_STREET;
+  if (!street.available) unavailable.push('street');
 
   const walk = walkScore(amenities);
   const drive = driveScore(amenities);
@@ -3020,6 +3053,7 @@ export async function buildReport(
     street,
     fifteenMinute: fifteenMinuteBreakdown(amenities),
     dataSparse: amenities.length < SPARSE_THRESHOLD,
+    unavailable,
   };
 }
 ```
