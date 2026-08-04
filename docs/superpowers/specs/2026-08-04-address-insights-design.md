@@ -144,12 +144,27 @@ catWeight = { grocery 3, dining 2, retail 2, errands 2,
               cafe 1.5, parks 1.5, schools 1, culture 1, fitness 1 }   # Σ = 15
 
 raw       = Σ (categoryScore(c) · catWeight(c)) / Σ catWeight
-penalty   = clamp((30 − intersectionsWithin1km) / 200, 0, 0.15)
-WalkScore = clamp(round(raw · 100 · (1 − penalty)), 0, 100)
+WalkScore = clamp(round(raw · 100), 0, 100)
 ```
 
-The intersection penalty distinguishes a walkable grid from a cul-de-sac subdivision with the same
-raw amenity count. Intersections are OSM highway nodes with degree ≥ 3.
+**An intersection-density penalty was specified here, then removed — measurement killed it.**
+The intent was to distinguish a walkable grid from a cul-de-sac subdivision with the same raw
+amenity count. Measured junctions per km² across the four reference locations:
+
+| Location | Junctions/km² |
+|---|---|
+| Ferrisburgh VT (rural) | 0 |
+| Plano TX (car-dependent suburb) | 238 |
+| Washington DC (dense urban) | 439 |
+| Brookline MA (transit suburb) | 507 |
+
+No threshold separates walkable from car-dependent: the leafy transit suburb outranks downtown DC,
+and the car-dependent suburb reaches more than half of DC's figure. OpenStreetMap splits a way
+whenever a tag changes — a name or surface change mid-street creates a new way and a spurious
+junction — so the proxy measures OSM bookkeeping as much as street topology. Intersection density
+is a sound walkability metric in the literature (the EPA's Smart Location Database uses it), but it
+needs true street-intersection counts rather than shared-node counts. Rather than ship a term that
+does no work, it was removed. This page exists to make that kind of decision visible.
 
 ### 6.3 Drive Score
 
