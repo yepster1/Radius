@@ -1,0 +1,4577 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-08-04T14:56:07Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 2810296409,
+      "lat": 33.0298251,
+      "lon": -96.7096809,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2205",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "100",
+        "amenity": "restaurant",
+        "contact:phone": "+1-469-229-9100",
+        "cuisine": "Uzbek",
+        "diet:halal": "yes",
+        "name": "Rokhat Grill",
+        "opening_hours": "Mo-Sa 11:00-23:00; Su 11:00-22:00",
+        "phone": "+1-469-298-2091",
+        "website": "https://rokhatgrills.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2814740644,
+      "lat": 33.0184571,
+      "lon": -96.6849812,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1405",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "fast_food",
+        "brand": "Schlotzsky's",
+        "brand:wikidata": "Q2244796",
+        "cuisine": "sandwich",
+        "name": "Schlotzsky's",
+        "phone": "+1-972-516-6639",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3692838566,
+      "lat": 33.0132718,
+      "lon": -96.7093934,
+      "tags": {
+        "amenity": "fast_food",
+        "brand": "Chipotle",
+        "brand:wikidata": "Q465751",
+        "cuisine": "mexican",
+        "name": "Chipotle",
+        "official_name": "Chipotle Mexican Grill",
+        "source": "osm_note",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3692844393,
+      "lat": 33.0201484,
+      "lon": -96.7182671,
+      "tags": {
+        "amenity": "bank",
+        "atm": "yes",
+        "name": "Viewpoint Bank",
+        "source": "Osm_note"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3710771206,
+      "lat": 33.0278569,
+      "lon": -96.7109815,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1915",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "500",
+        "amenity": "restaurant",
+        "cuisine": "pizza",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "name": "Marinara Pizza",
+        "opening_hours": "Su 15:00-21:00; Mo-Sa 10:30-22:00",
+        "start_date": "1993",
+        "website": "http://www.marinarapizza.net/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3710783552,
+      "lat": 33.0277323,
+      "lon": -96.7114373,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1915",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "340",
+        "amenity": "cafe",
+        "cuisine": "coffee_shop",
+        "name": "Coffee del Rey",
+        "website": "https://www.coffeedelrey.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4777145959,
+      "lat": 33.0202787,
+      "lon": -96.7043868,
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ye Ole Butcher Shop"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5249095450,
+      "lat": 33.0160908,
+      "lon": -96.7098256,
+      "tags": {
+        "name": "Al's Formal Wear",
+        "shop": "clothes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5258531555,
+      "lat": 33.0195526,
+      "lon": -96.7126398,
+      "tags": {
+        "amenity": "fast_food",
+        "brand": "Potbelly",
+        "brand:wikidata": "Q7234777",
+        "cuisine": "sandwich",
+        "name": "Potbelly",
+        "official_name": "Potbelly Sandwich Works",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5258531556,
+      "lat": 33.0196178,
+      "lon": -96.7124182,
+      "tags": {
+        "addr:housenumber": "601",
+        "addr:postcode": "75075",
+        "addr:street": "West 15th Street",
+        "air_conditioning": "yes",
+        "amenity": "restaurant",
+        "bar": "no",
+        "check_date": "2026-03-12",
+        "contact:facebook": "61577794897563",
+        "contact:instagram": "primedoner",
+        "cuisine": "mediterranean;turkish",
+        "diet:halal": "yes",
+        "email": "primedonerllc@gmail.com",
+        "microbrewery": "no",
+        "name": "PRIME Restaurant Doner & Cagkebab",
+        "name:tr": "PRIME Restoranı Doner & Cagkebab",
+        "opening_hours": "Su 10:00-22:00; Mo-Sa 12:00-22:00",
+        "outdoor_seating": "yes",
+        "phone": "+1-945-369-7740",
+        "reservation": "yes",
+        "smoking": "outside",
+        "toilets": "yes",
+        "website": "https://theprimedoner.com/",
+        "website:menu": "https://theprimedoner.com/food-menu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5434616660,
+      "lat": 33.0197992,
+      "lon": -96.6995573,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1037",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "austrian",
+        "email": "jorg@jorgscafevienna.com",
+        "name": "Jörg's Cafe Vienna",
+        "opening_hours": "We-Th 17:00-21:00; Fr-Sa 11:00-14:00,17:00-21:30",
+        "phone": "+1-972-509-5966",
+        "website": "https://jorgscafevienna.com/",
+        "website:menu": "http://jorgscafevienna.com/menu/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5479127148,
+      "lat": 33.0114699,
+      "lon": -96.7072557,
+      "tags": {
+        "amenity": "restaurant",
+        "cuisine": "mexican",
+        "name": "El Fenix"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5489368421,
+      "lat": 33.0197864,
+      "lon": -96.700436,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1011",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "american",
+        "internet_access": "wlan",
+        "name": "Vickery Park",
+        "note": "Kitchen closes at 10:30pm everyday",
+        "opening_hours": "Mo-Tu 16:00-24:00; We,Th,Su 11:00-24:00; Fr-Sa 11:00-02:00",
+        "phone": "+1-972-423-6205",
+        "website": "https://vickeryparkplano.com/",
+        "website:menu": "https://vickeryparkplano.com/menu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5569772916,
+      "lat": 33.0150408,
+      "lon": -96.7074858,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1130",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "North Central Expressway",
+        "amenity": "fast_food",
+        "brand": "Schlotzsky's",
+        "brand:wikidata": "Q2244796",
+        "cuisine": "sandwich",
+        "name": "Schlotzsky's",
+        "phone": "+1-972-800-0510",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5797585465,
+      "lat": 33.010833,
+      "lon": -96.7094937,
+      "tags": {
+        "addr:unit": "100",
+        "brand": "Marshalls",
+        "brand:wikidata": "Q15903261",
+        "name": "Marshalls",
+        "shop": "department_store"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5808213190,
+      "lat": 33.0098351,
+      "lon": -96.7090034,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "701",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "100",
+        "amenity": "restaurant",
+        "brand": "McAlister's Deli",
+        "brand:wikidata": "Q17020829",
+        "cuisine": "sandwich",
+        "delivery": "yes",
+        "name": "McAlister's Deli",
+        "opening_hours": "Su-Sa 10:30-22:00",
+        "phone": "+1-469-467-6400",
+        "takeaway": "yes",
+        "website": "https://www.mcalistersdeli.com/locations/tx/plano/701-north-central-expressway-suite-100-1346"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6026107942,
+      "lat": 33.0192324,
+      "lon": -96.6990713,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1418",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "amenity": "cafe",
+        "cuisine": "coffee_shop",
+        "internet_access": "yes",
+        "name": "1418 Coffeehouse",
+        "opening_hours": "Mo-Sa 07:00-17:00"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6026120333,
+      "lat": 33.0191923,
+      "lon": -96.7110632,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2101",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "1",
+        "alt_name": "Einstein Brothers Bagels",
+        "amenity": "fast_food",
+        "branch": "15th & Central",
+        "brand": "Einstein Bros. Bagels",
+        "brand:wikidata": "Q5349788",
+        "cuisine": "bagel",
+        "name": "Einstein Bros. Bagels",
+        "opening_hours": "Mo-Fr 05:00-14:00; Sa-Su 06:00-14:00",
+        "takeaway": "yes",
+        "website": "https://locations.einsteinbros.com/us/tx/plano/1201-central-expy"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6101476488,
+      "lat": 33.0198002,
+      "lon": -96.6996374,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1035",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "name": "The Hair Parlour",
+        "shop": "hairdresser",
+        "website": "https://www.thpsalon.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6125414078,
+      "lat": 33.0195589,
+      "lon": -96.6997714,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1018",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "shop": "books"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6365565185,
+      "lat": 33.0182296,
+      "lon": -96.7003848,
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Urban Rio"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6365565385,
+      "lat": 33.0195635,
+      "lon": -96.6995442,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1026",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "barbecue",
+        "name": "Lockhart Smokehouse",
+        "opening_hours": "Mo-Tu 11:00-20:00; We-Su 11:00-21:00",
+        "phone": "+1-972-516-8900",
+        "website": "https://lockhartsmokehouse.com/",
+        "website:menu": "https://lockhartsmokehouse.com/wp-content/uploads/2025/04/1Single-Menu-Website-MP-25.pdf"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6365565386,
+      "lat": 33.0189758,
+      "lon": -96.6990904,
+      "tags": {
+        "addr:street": "K Avenue",
+        "amenity": "restaurant",
+        "cuisine": "american",
+        "name": "Brix"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6392960161,
+      "lat": 33.0195831,
+      "lon": -96.6816413,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1424",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "addr:unit": "203",
+        "amenity": "restaurant",
+        "cuisine": "mexican",
+        "name": "Taqueria Los Angeles",
+        "phone": "+1-972-423-2303",
+        "website": "https://www.taquerialosangeles.net/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6916710057,
+      "lat": 33.0133721,
+      "lon": -96.7093984,
+      "tags": {
+        "amenity": "fast_food",
+        "brand": "Genghis Grill",
+        "brand:website": "https://www.genghisgrill.com/",
+        "brand:wikidata": "Q29470710",
+        "cuisine": "mongolian_grill",
+        "fixme": "This location is not listed on the Genghis Grill website. Perhaps it is closed?",
+        "name": "Genghis Grill"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8082159817,
+      "lat": 33.0310971,
+      "lon": -96.69837,
+      "tags": {
+        "addr:housenumber": "2496",
+        "addr:street": "K Avenue",
+        "amenity": "fast_food",
+        "check_date": "2026-07-20",
+        "name": "Pizza Patrón"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8649285809,
+      "lat": 33.0298052,
+      "lon": -96.6983168,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:county": "Collin, TX",
+        "addr:housenumber": "2400",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "brand": "ALDI",
+        "brand:wikidata": "Q41171672",
+        "diet:halal": "only",
+        "diet:kosher": "only",
+        "name": "ALDI",
+        "opening_hours": "Mo,We,Fr-Su 09:00-21:00, Tu,Th 08:30-21:00",
+        "phone": "+1 888-475-1031",
+        "shop": "supermarket",
+        "website": "https://stores.aldi.us/tx/plano/2400-k-avenue",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9084584345,
+      "lat": 33.0195357,
+      "lon": -96.7002052,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1006",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "bar": "yes",
+        "contact:facebook": "UrbanCrust",
+        "contact:instagram": "urbancrust",
+        "cuisine": "pizza",
+        "fax": "+1-972-543-8957",
+        "name": "Urban Crust",
+        "opening_hours": "Su-Th 11:00-24:00; Fr-Sa 11:00-02:00",
+        "phone": "+1-972-509-1400",
+        "website": "https://www.urbancrust.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9524790253,
+      "lat": 33.0079319,
+      "lon": -96.7096589,
+      "tags": {
+        "access": "yes",
+        "leisure": "pitch",
+        "name": "Texas Archery Academy",
+        "sport": "archery"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9731280828,
+      "lat": 33.0279562,
+      "lon": -96.711668,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1915",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "N Central Expressway",
+        "addr:unit": "Unit 120",
+        "amenity": "theatre",
+        "name": "Outcry Theatre",
+        "website": "https://www.outcrytheatre.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10223779424,
+      "lat": 33.0293263,
+      "lon": -96.6968945,
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10223779499,
+      "lat": 33.0306676,
+      "lon": -96.6838462,
+      "tags": {
+        "amenity": "pharmacy",
+        "brand": "Walgreens",
+        "brand:wikidata": "Q1591889",
+        "dispensing": "yes",
+        "drive_through": "yes",
+        "healthcare": "pharmacy",
+        "name": "Walgreens",
+        "opening_hours": "Mo-Fr 09:00-20:00; Sa 09:00-18:00",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10947974537,
+      "lat": 33.0080924,
+      "lon": -96.682923,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "721",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "fast_food",
+        "brand": "Sonic",
+        "brand:wikidata": "Q7561808",
+        "cuisine": "burger",
+        "drive_in": "yes",
+        "name": "Sonic",
+        "opening_hours": "Mo-Sa 06:00-24:00",
+        "phone": "+1 972-881-7414",
+        "takeaway": "yes",
+        "website": "https://locations.sonicdrivein.com/tx/plano/721-jupiter.html"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10948059592,
+      "lat": 33.0076643,
+      "lon": -96.6830943,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2405",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East Plano Parkway",
+        "amenity": "fast_food",
+        "cuisine": "chicken",
+        "drive_through": "yes",
+        "name": "Williams Chicken",
+        "opening_hours": "Mo-Sa 10:00-22:00, Su 11:00-21:00",
+        "phone": "+1-972-423-0043",
+        "website": "https://williamschickentx.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11411044637,
+      "lat": 33.03065,
+      "lon": -96.697417,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2442",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "amenity": "restaurant",
+        "cuisine": "american",
+        "name": "Poor Richard's Cafe",
+        "opening_hours": "Mo-Fr 06:00-14:00; Sa-Su 06:00-14:30",
+        "phone": "+1-972-423-1524",
+        "website": "https://poorrichardscafe.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11901322468,
+      "lat": 33.0241749,
+      "lon": -96.7091079,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1708",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "North Central Expressway",
+        "air_conditioning": "yes",
+        "brand": "Harbor Freight Tools",
+        "brand:wikidata": "Q5654601",
+        "name": "Harbor Freight Tools",
+        "opening_hours": "Mo-Sa 08:00-20:00; Su 09:00-18:00",
+        "phone": "+1 469-606-1515",
+        "shop": "hardware",
+        "website": "https://www.harborfreight.com/storelocator/1708-n-central-expressway-plano-75074?number=2963",
+        "wikidata": "Q5654601",
+        "wikipedia": "en:Harbor Freight Tools"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11970961276,
+      "lat": 33.030795,
+      "lon": -96.69948,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2425",
+        "addr:postcode": "75074-5922",
+        "addr:state": "TX",
+        "addr:street": "Avenue K",
+        "amenity": "fast_food",
+        "brand": "DQ Grill & Chill",
+        "brand:wikidata": "Q1141226",
+        "cuisine": "ice_cream;burger",
+        "name": "DQ Grill & Chill",
+        "phone": "+1 972-423-4509",
+        "takeaway": "yes",
+        "website": "https://www.dairyqueen.com/locations/tx/plano/2425-ave-k/4264"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11970961296,
+      "lat": 33.0168666,
+      "lon": -96.6843117,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2100",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "14th Street",
+        "addr:unit": "119",
+        "amenity": "fast_food",
+        "branch": "Plano 14th",
+        "brand": "Wingstop",
+        "brand:wikidata": "Q8025339",
+        "cuisine": "wings",
+        "name": "Wingstop",
+        "phone": "+1 972-633-2525",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385531367,
+      "lat": 33.0195554,
+      "lon": -96.6999972,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1010",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "air_conditioning": "yes",
+        "amenity": "restaurant",
+        "cuisine": "dessert",
+        "name": "Better Than Sex- A Dessert Restaurant",
+        "opening_hours": "Su-Th 18:00-23:00; Fr-Sa 18:00-24:00",
+        "phone": "+1-469-925-5141",
+        "website": "https://www.betterthansexdesserts.com/location/plano-tx/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385531371,
+      "lat": 33.0195578,
+      "lon": -96.6998307,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1016",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "steak_house",
+        "name": "BAR-Ranch Steak Company",
+        "phone": "+1-972-424-2887",
+        "website": "https://www.barranchco.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385531378,
+      "lat": 33.0195628,
+      "lon": -96.6997233,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1020",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "check_date:currency:XBT": "2025-11-14",
+        "currency:XBT": "yes",
+        "hairdresser": "barber",
+        "male": "yes",
+        "name": "Rapattoni's Barbershop",
+        "opening_hours": "Tu-Fr 10:00-19:00; Sa 10:00-17:00; Su 11:00-16:00",
+        "payment:lightning": "yes",
+        "payment:lightning:operator": "square",
+        "payment:lightning_contactless": "no",
+        "payment:onchain": "no",
+        "phone": "+1-214-501-2080",
+        "shop": "hairdresser",
+        "website": "https://rapattonisbarbershop.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385600956,
+      "lat": 33.0195638,
+      "lon": -96.6993937,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1032",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "grill",
+        "name": "Coco Beach Plano",
+        "not:brand:wikidata": "Q65084369",
+        "website": "https://www.cocobeachplano.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385610514,
+      "lat": 33.0197809,
+      "lon": -96.7005568,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1007",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "cuisine": "sushi",
+        "name": "EBESU",
+        "phone": "+1-972-212-4564",
+        "website": "https://ebesu-usa.com/",
+        "website:menu": "https://ebesu-usa.com/menu-2/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385610515,
+      "lat": 33.0197842,
+      "lon": -96.6999846,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1023",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "cafe",
+        "cuisine": "coffee_shop",
+        "name": "Lemma Coffee Co",
+        "opening_hours": "Mo-Fr 07:00-19:00; Sa-Su 08:00-19:00",
+        "phone": "+1-972-424-3775",
+        "website": "https://www.lemmacoffeeco.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12385610516,
+      "lat": 33.0197949,
+      "lon": -96.6997477,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1031",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "hairdresser": "barber",
+        "male": "yes",
+        "name": "Plano Barbers",
+        "opening_hours": "Mo-Fr 08:45-18:00; Sa 08:00-17:00",
+        "phone": "+1-972-423-3400",
+        "shop": "hairdresser",
+        "website": "https://planobarbers.net/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12981158218,
+      "lat": 33.0195637,
+      "lon": -96.6996125,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1024",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "clothes": "women",
+        "email": "lylasplano@gmail.com",
+        "name": "Lyla's: Clothing & Gifts",
+        "opening_hours": "Mo 11:00-15:00; Tu-Sa 11:00-18:00; Su 12:00-16:00",
+        "phone": "+1-214-907-6239",
+        "shop": "clothes",
+        "website": "https://www.lylasclothing.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12981158219,
+      "lat": 33.0198009,
+      "lon": -96.6994594,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1039",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "addr:unit": "1",
+        "name": "Filson",
+        "shop": "clothes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12981158221,
+      "lat": 33.0197867,
+      "lon": -96.7000605,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1021",
+        "addr:postcode": "75093",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "leisure": "fitness_centre",
+        "name": "Shala Yoga Loft",
+        "phone": "+1-469-543-0000",
+        "sport": "yoga",
+        "website": "https://www.shalayogaloft.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12981158255,
+      "lat": 33.0196279,
+      "lon": -96.6986144,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1112",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "contact:facebook": "https://www.facebook.com/people/Mama-Vickys-Pupusas-y-Mas/100063551710204/",
+        "cuisine": "pupusa;menudo;pozole",
+        "email": "oscarv366@gmail.com",
+        "name": "Mama Vicky's Pupusas y Mas",
+        "opening_hours": "Mo 07:00-21:00; Tu off; We-Sa 07:00-21:00; Su 07:00-18:30",
+        "phone": "+1-469-430-5326"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12995108669,
+      "lat": 33.0243612,
+      "lon": -96.6978278,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1804",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "name": "Green Vine Market",
+        "phone": "+1-972-942-0808",
+        "shop": "supermarket"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13275023919,
+      "lat": 33.0306855,
+      "lon": -96.7071978,
+      "tags": {
+        "addr:housenumber": "2400",
+        "addr:postcode": "75074",
+        "addr:street": "North Central Expressway",
+        "amenity": "bank",
+        "atm": "yes",
+        "branch": "Plano",
+        "brand": "Bank of America",
+        "brand:wikidata": "Q487907",
+        "check_date": "2025-10-18",
+        "contact:phone": "+1 469-645-6026",
+        "contact:website": "https://locators.bankofamerica.com/tx/plano/financial-centers-plano-16746.html",
+        "drive_through": "yes",
+        "internet_access": "no",
+        "name": "Bank of America",
+        "opening_hours": "Mo-Fr 09:00-17:00; Sa 09:00-14:00; Su off",
+        "opening_hours:drive_through": "24/7",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13401975990,
+      "lat": 33.0177368,
+      "lon": -96.712679,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "600",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "West 15th Street",
+        "addr:unit": "Ste B",
+        "leisure": "fitness_centre",
+        "name": "Eos Fitness",
+        "opening_hours": "24/7",
+        "phone": "+1-469-277-6100",
+        "website": "https://eosfitness.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13523088502,
+      "lat": 33.0267435,
+      "lon": -96.7081656,
+      "tags": {
+        "addr:housenumber": "521",
+        "addr:postcode": "75074",
+        "addr:street": "Central Parkway East",
+        "amenity": "restaurant",
+        "cuisine": "asian",
+        "name": "King Buffet",
+        "opening_hours": "Mo-Su 11:00-21:00",
+        "phone": "+1 972-422-0000",
+        "self_service": "only"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13598144463,
+      "lat": 33.0368848,
+      "lon": -96.7022904,
+      "tags": {
+        "addr:housenumber": "800",
+        "addr:street": "East Parker Road",
+        "addr:unit": "A",
+        "check_date": "2026-02-25",
+        "name": "Xpress Food & Fuel",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13621813904,
+      "lat": 33.029582,
+      "lon": -96.7095301,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2205",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "120",
+        "amenity": "cafe",
+        "branch": "Plano",
+        "brand": "Mango Mango Dessert",
+        "brand:wikidata": "Q117811257",
+        "cuisine": "asian;dessert",
+        "name": "Mango Mango Dessert",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13621813905,
+      "lat": 33.0294114,
+      "lon": -96.7096337,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2205",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "100",
+        "amenity": "restaurant",
+        "cuisine": "korean;bbq",
+        "name": "WooMeOk Korean BBQ",
+        "website": "https://www.woomeeokkoreanbbqplano.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13621813906,
+      "lat": 33.029646,
+      "lon": -96.7095264,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2205",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "125",
+        "amenity": "restaurant",
+        "cuisine": "noodle",
+        "name": "KungFu Noodle",
+        "opening_hours": "Su-Th 11:00-21:00; Fr-Sa 11:00-22:30",
+        "phone": "+1-469-969-0200",
+        "website": "https://www.kungfunoodleplanotx.com"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13621813907,
+      "lat": 33.02952,
+      "lon": -96.709532,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2205",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "addr:unit": "110",
+        "amenity": "cafe",
+        "brand": "Gong Cha",
+        "brand:wikidata": "Q5581670",
+        "brand:zh": "貢茶",
+        "cuisine": "bubble_tea",
+        "int_name": "Gong Cha",
+        "name": "Gong Cha",
+        "name:zh": "貢茶",
+        "opening_hours": "Su-Th 11:00-22:00; Fr-Sa 11:00-23:00",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13625895604,
+      "lat": 33.0374867,
+      "lon": -96.6995359,
+      "tags": {
+        "check_date": "2026-03-07",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13646158580,
+      "lat": 33.0177721,
+      "lon": -96.7122036,
+      "tags": {
+        "brand": "Big Lots",
+        "brand:wikidata": "Q4905973",
+        "name": "Big Lots",
+        "shop": "department_store"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13708743846,
+      "lat": 33.0192228,
+      "lon": -96.7102728,
+      "tags": {
+        "brand": "QuikTrip",
+        "brand:wikidata": "Q7271953",
+        "name": "QuikTrip",
+        "shop": "convenience",
+        "short_name": "QT"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13988591238,
+      "lat": 33.0107666,
+      "lon": -96.6942795,
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1308",
+        "addr:postcode": "75074-1306",
+        "addr:state": "TX",
+        "addr:street": "Capital Avenue",
+        "addr:unit": "2",
+        "check_date": "2026-07-04",
+        "contact:email": "info@lc-hardware.com",
+        "currency:XBT": "yes",
+        "name": "LC Hardware",
+        "opening_hours": "Mo-Fr 08:00-17:00",
+        "payment:lightning": "yes",
+        "payment:lightning:operator": "square",
+        "payment:lightning_contactless": "no",
+        "payment:onchain": "no",
+        "phone": "+1-214-872-0003",
+        "shop": "hardware",
+        "website": "https://lc-hardware.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14029975327,
+      "lat": 33.0310103,
+      "lon": -96.6971125,
+      "tags": {
+        "addr:housenumber": "1160",
+        "addr:street": "East Park Boulevard",
+        "amenity": "restaurant",
+        "check_date": "2026-07-20",
+        "cuisine": "mexican",
+        "name": "La Sabrosa",
+        "opening_hours": "Mo-Th,Su 07:00-21:00; Fr-Sa 07:00-22:00"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14029975331,
+      "lat": 33.0309301,
+      "lon": -96.6983733,
+      "tags": {
+        "addr:housenumber": "2488",
+        "addr:street": "K Avenue",
+        "check_date": "2026-07-20",
+        "name": "Plano Laundry",
+        "self_service": "yes",
+        "shop": "laundry"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14030000419,
+      "lat": 33.0368239,
+      "lon": -96.6996066,
+      "tags": {
+        "check_date": "2026-07-20",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14040127448,
+      "lat": 33.0192977,
+      "lon": -96.7083988,
+      "tags": {
+        "brand": "Texaco",
+        "brand:wikidata": "Q775060",
+        "check_date": "2026-07-22",
+        "name": "Texaco",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14040127450,
+      "lat": 33.0201837,
+      "lon": -96.7082219,
+      "tags": {
+        "addr:housenumber": "551",
+        "addr:street": "East 15th Street",
+        "amenity": "bank",
+        "brand": "Chase",
+        "brand:wikidata": "Q524629",
+        "check_date": "2026-07-22",
+        "name": "Chase"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14040127451,
+      "lat": 33.0200475,
+      "lon": -96.7077967,
+      "tags": {
+        "addr:housenumber": "603",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "check_date": "2026-07-22",
+        "cuisine": "seafood",
+        "name": "Captain D’s"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14040127454,
+      "lat": 33.0193658,
+      "lon": -96.7069224,
+      "tags": {
+        "amenity": "restaurant",
+        "check_date": "2026-07-22",
+        "name": "Grandy’s"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14040127455,
+      "lat": 33.0190588,
+      "lon": -96.7073983,
+      "tags": {
+        "addr:housenumber": "600",
+        "addr:street": "East 15th Street",
+        "amenity": "bank",
+        "brand": "Frost Bank",
+        "brand:wikidata": "Q5506152",
+        "check_date": "2026-07-22",
+        "name": "Frost Bank"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14062544037,
+      "lat": 33.0365524,
+      "lon": -96.7063097,
+      "tags": {
+        "addr:housenumber": "2901",
+        "addr:street": "North Central Expressway",
+        "addr:unit": "109",
+        "amenity": "restaurant",
+        "check_date": "2026-07-30",
+        "cuisine": "chinese",
+        "name": "ChongQing House",
+        "opening_hours": "Mo,We-Su 11:00-21:00; Tu off",
+        "phone": "+1 469-661-9888"
+      }
+    },
+    {
+      "type": "way",
+      "id": 42638042,
+      "center": {
+        "lat": 33.0145094,
+        "lon": -96.7095029
+      },
+      "nodes": [
+        6047758344,
+        6047758343,
+        532741627,
+        6101392313,
+        532741625,
+        6101392315,
+        532741624,
+        532741617,
+        532741620,
+        6047758344
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "941",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "fast_food",
+        "brand": "Panera Bread",
+        "brand:wikidata": "Q7130852",
+        "building": "retail",
+        "building:levels": "1",
+        "cuisine": "sandwich;bakery",
+        "drive_through": "yes",
+        "name": "Panera Bread",
+        "opening_hours": "Mo-Fr 06:30-22:00; Sa-Su 07:30-22:00",
+        "phone": "+1 972-202-5382",
+        "short_name": "Panera",
+        "takeaway": "yes",
+        "website": "https://locations.panerabread.com/tx/plano/941-n-central-expy.html",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 258855186,
+      "center": {
+        "lat": 33.0234667,
+        "lon": -96.6981066
+      },
+      "nodes": [
+        2641703921,
+        2641703922,
+        2641703923,
+        2641703924,
+        2641703925,
+        2641703926,
+        2641703927,
+        2641703928,
+        2641703921
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1112",
+        "addr:postcode": "75054",
+        "addr:street": "18th Street",
+        "alt_name": "Downtown Plano Post Office",
+        "amenity": "post_office",
+        "building": "yes",
+        "ele": "200",
+        "gnis:feature_id": "2428272",
+        "name": "Plano Post Office - Downtown Station",
+        "opening_hours": "Mo-Fr 10:00-16:00",
+        "operator": "United States Postal Service",
+        "operator:short": "USPS",
+        "operator:type": "public",
+        "operator:website": "https://www.usps.com",
+        "operator:wikidata": "Q668687",
+        "operator:wikipedia": "en:United States Postal Service",
+        "short_name": "USPS",
+        "source:ele": "National Elevation Dataset"
+      }
+    },
+    {
+      "type": "way",
+      "id": 258857981,
+      "center": {
+        "lat": 33.0158959,
+        "lon": -96.6810295
+      },
+      "nodes": [
+        2641721836,
+        2641721835,
+        2641721833,
+        6101392351,
+        6101392350,
+        2641721834,
+        2641721832,
+        2641721831,
+        2641721836
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1200",
+        "addr:postcode": "75074",
+        "addr:street": "Jupiter Road",
+        "amenity": "post_office",
+        "building": "yes",
+        "check_date:opening_hours": "2026-05-26",
+        "ele": "200",
+        "gnis:feature_id": "2428306",
+        "name": "Plano Post Office",
+        "opening_hours": "Mo-Fr 08:30-17:00; Sa 09:00-12:00",
+        "operator": "United States Postal Service",
+        "operator:short": "USPS",
+        "operator:type": "public",
+        "operator:website": "https://www.usps.com",
+        "operator:wikidata": "Q668687",
+        "operator:wikipedia": "en:United States Postal Service",
+        "short_name": "USPS",
+        "source:ele": "National Elevation Dataset",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "way",
+      "id": 262078922,
+      "center": {
+        "lat": 33.0205367,
+        "lon": -96.7018949
+      },
+      "nodes": [
+        2677246337,
+        2677246339,
+        10812609510,
+        2677246340,
+        5286714243,
+        2677246337
+      ],
+      "tags": {
+        "leisure": "park",
+        "name": "Haggard Park"
+      }
+    },
+    {
+      "type": "way",
+      "id": 265077640,
+      "center": {
+        "lat": 33.0325592,
+        "lon": -96.6986684
+      },
+      "nodes": [
+        2707241439,
+        2707241444,
+        2707241447,
+        2707241450,
+        2707241439
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2548",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "air_conditioning": "yes",
+        "amenity": "fast_food",
+        "branch": "K Avenue & Park",
+        "brand": "Whataburger",
+        "brand:wikidata": "Q376627",
+        "building": "retail",
+        "cuisine": "burger",
+        "diet:gluten_free": "only",
+        "diet:halal": "only",
+        "diet:kosher": "only",
+        "diet:vegan": "only",
+        "diet:vegetarian": "only",
+        "drive_through": "yes",
+        "name": "Whataburger",
+        "opening_hours": "24/7",
+        "phone": "+1 972-423-5506",
+        "roof:shape": "flat",
+        "takeaway": "yes",
+        "website": "https://locations.whataburger.com/tx/plano/2548-k-ave.html",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291924002,
+      "center": {
+        "lat": 33.01868,
+        "lon": -96.7120004
+      },
+      "nodes": [
+        2954319382,
+        2954319383,
+        2954319384,
+        2954319385,
+        2954319382
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "520",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "West 15th Street",
+        "amenity": "restaurant",
+        "building": "yes",
+        "cuisine": "french",
+        "name": "La Madeleine French Bakery and Cafe",
+        "opening_hours": "Mo-Su 06:30-23:00",
+        "outdoor_seating": "yes",
+        "smoking": "no",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291924004,
+      "center": {
+        "lat": 33.0202995,
+        "lon": -96.7127787
+      },
+      "nodes": [
+        2954319390,
+        2954319391,
+        2954319392,
+        6100948043,
+        6100948042,
+        2954319393,
+        2954319390
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "building": "yes",
+        "name": "Norma's Cafe"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291924006,
+      "center": {
+        "lat": 33.0141611,
+        "lon": -96.7094987
+      },
+      "nodes": [
+        2954319398,
+        6047758340,
+        6047758339,
+        6047758342,
+        6047758341,
+        2954319404,
+        2954319405,
+        2954319406,
+        2954319407,
+        2954319408,
+        2954319409,
+        2954319410,
+        2954319411,
+        2954319412,
+        2954319398
+      ],
+      "tags": {
+        "addr:housenumber": "933",
+        "addr:street": "Central Expressway",
+        "air_conditioning": "yes",
+        "amenity": "restaurant",
+        "brand": "IHOP",
+        "brand:wikidata": "Q1185675",
+        "building": "retail",
+        "building:levels": "1",
+        "changing_table": "yes",
+        "cuisine": "breakfast;pancake",
+        "diet:gluten_free": "only",
+        "diet:halal": "only",
+        "diet:kosher": "only",
+        "diet:vegan": "only",
+        "diet:vegetarian": "only",
+        "internet_access": "yes",
+        "internet_access:fee": "no",
+        "name": "IHOP",
+        "opening_hours": "24/7",
+        "roof:shape": "half-hipped",
+        "smoking": "outside",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291924007,
+      "center": {
+        "lat": 33.0139358,
+        "lon": -96.7094794
+      },
+      "nodes": [
+        2954319413,
+        2954319414,
+        2954319415,
+        2954319416,
+        2954319413
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "restaurant",
+        "brand": "Jason's Deli",
+        "brand:wikidata": "Q16997641",
+        "building": "retail",
+        "building:levels": "1",
+        "cuisine": "sandwich",
+        "name": "Jason's Deli",
+        "opening_hours": "10:00-22:00",
+        "takeaway": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291924009,
+      "center": {
+        "lat": 33.0173268,
+        "lon": -96.7096509
+      },
+      "nodes": [
+        2954319420,
+        2954319421,
+        2954319422,
+        2954319423,
+        2954319424,
+        2954319425,
+        2954319426,
+        2954319427,
+        2954319428,
+        2954319429,
+        2954319430,
+        2954319431,
+        2954319432,
+        2954319533,
+        2954319534,
+        2954319535,
+        2954319420
+      ],
+      "tags": {
+        "addr:housenumber": "1101",
+        "addr:postcode": "75075",
+        "addr:street": "North Central Expressway",
+        "amenity": "restaurant",
+        "brand": "BJ's",
+        "brand:wikidata": "Q4835755",
+        "building": "yes",
+        "check_date": "2024-09-22",
+        "cuisine": "american",
+        "name": "BJ's",
+        "official_name": "BJ's Restaurant & Brewhouse",
+        "phone": "+1 972-424-4262",
+        "website": "https://www.bjsrestaurants.com/locations/tx/plano"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291931083,
+      "center": {
+        "lat": 33.009966,
+        "lon": -96.7069997
+      },
+      "nodes": [
+        2954341405,
+        2954341406,
+        2954341407,
+        2954341408,
+        2954341409,
+        2954341410,
+        2954341411,
+        2954341412,
+        2954341413,
+        2954341414,
+        2954341415,
+        2954341416,
+        2954341417,
+        2954341418,
+        2954341419,
+        2954341420,
+        2954341405
+      ],
+      "tags": {
+        "addr:housenumber": "700",
+        "addr:postcode": "75074",
+        "addr:street": "Central Expressway",
+        "amenity": "restaurant",
+        "brand": "Olive Garden",
+        "brand:wikidata": "Q3045312",
+        "building": "yes",
+        "cuisine": "italian",
+        "name": "Olive Garden",
+        "opening_hours": "Fr-Sa 11:00-23:00; Su-Th 11:00-22:00",
+        "phone": "+1 972 578 8576",
+        "website": "https://olivegarden.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291931092,
+      "center": {
+        "lat": 33.0179661,
+        "lon": -96.7079457
+      },
+      "nodes": [
+        2954341874,
+        2954341875,
+        2954341876,
+        2954341877,
+        2954341874
+      ],
+      "tags": {
+        "addr:housenumber": "1320",
+        "addr:street": "North Central Expressway",
+        "amenity": "restaurant",
+        "building": "retail",
+        "contact:website": "https://www.fishntails.com/our-locations/",
+        "cuisine": "seafood",
+        "name": "Fish N' Tails Oyster Bar"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291931096,
+      "center": {
+        "lat": 33.0189428,
+        "lon": -96.7100731
+      },
+      "nodes": [
+        2954341909,
+        2954341904,
+        2954341899,
+        2954341914,
+        2954341909
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1405",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "cafe",
+        "brand": "Starbucks",
+        "brand:wikidata": "Q37158",
+        "building": "yes",
+        "cuisine": "coffee_shop",
+        "name": "Starbucks",
+        "official_name": "Starbucks Coffee",
+        "opening_hours": "Mo-Fr 04:30-22:00; Sa-Su 05:00-22:00",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 291931100,
+      "center": {
+        "lat": 33.015746,
+        "lon": -96.7092648
+      },
+      "nodes": [
+        2954341948,
+        2954341949,
+        2954341950,
+        2954341951,
+        5248939913,
+        5248939914,
+        2954341952,
+        2954341953,
+        2954341948
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1009",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "fast_food",
+        "brand": "Chipotle",
+        "brand:wikidata": "Q465751",
+        "building": "yes",
+        "cuisine": "mexican",
+        "name": "Chipotle",
+        "official_name": "Chipotle Mexican Grill",
+        "phone": "+1 972-423-5115",
+        "takeaway": "yes",
+        "website": "https://locations.chipotle.com/tx/plano/1009-n-central-expy"
+      }
+    },
+    {
+      "type": "way",
+      "id": 325115300,
+      "center": {
+        "lat": 33.0086316,
+        "lon": -96.7096416
+      },
+      "nodes": [
+        3317825461,
+        3317825462,
+        5366303014,
+        5366303015,
+        3317825463,
+        5366303013,
+        5366303012,
+        3317825464,
+        3317825461
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "212",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "West Plano Parkway",
+        "amenity": "fast_food",
+        "brand": "Egg N Bird",
+        "building": "yes",
+        "check_date": "2025-10-12",
+        "contact:phone": "+1 972-460-0641",
+        "contact:website": "https://www.eggnbird.com/",
+        "cuisine": "chicken",
+        "drive_through": "yes",
+        "name": "Egg N Bird",
+        "opening_hours": "11:00-20:00",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 347598866,
+      "center": {
+        "lat": 33.0187616,
+        "lon": -96.715995
+      },
+      "nodes": [
+        3538436946,
+        3538436947,
+        3538436948,
+        3538436949,
+        5258365026,
+        5258365025,
+        5258365024,
+        5258365023,
+        3538436946
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1000",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "West 15th Street",
+        "amenity": "fast_food",
+        "brand": "Raising Cane's",
+        "brand:wikidata": "Q7285144",
+        "building": "yes",
+        "cuisine": "chicken",
+        "drive_through": "yes",
+        "name": "Raising Cane's",
+        "official_name": "Raising Cane's Chicken Fingers",
+        "outdoor_seating": "no",
+        "phone": "+1-972-422-7084",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 413765365,
+      "center": {
+        "lat": 33.0295948,
+        "lon": -96.7159877
+      },
+      "nodes": [
+        4486196437,
+        4150221166,
+        4150221167,
+        4150221168,
+        4486196437
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "tennis"
+      }
+    },
+    {
+      "type": "way",
+      "id": 413765366,
+      "center": {
+        "lat": 33.0296638,
+        "lon": -96.7158326
+      },
+      "nodes": [
+        4150221169,
+        4486196435,
+        4486196438,
+        4486196436,
+        4150221169
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "basketball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 413765367,
+      "center": {
+        "lat": 33.0295008,
+        "lon": -96.7158445
+      },
+      "nodes": [
+        4150221172,
+        4150221165,
+        4486196439,
+        4150221171,
+        4150221172
+      ],
+      "tags": {
+        "leisure": "pitch"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449016990,
+      "center": {
+        "lat": 33.0320275,
+        "lon": -96.6847883
+      },
+      "nodes": [
+        4459831087,
+        4459831005,
+        4459831004,
+        4459831082,
+        4459831087
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "american_football"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017027,
+      "center": {
+        "lat": 33.0248823,
+        "lon": -96.6969106
+      },
+      "nodes": [
+        4459830989,
+        4459830434,
+        4459830420,
+        4459830427,
+        4459830986,
+        4459830989
+      ],
+      "tags": {
+        "amenity": "school",
+        "name": "Bird Education Center"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017040,
+      "center": {
+        "lat": 33.0323651,
+        "lon": -96.6836333
+      },
+      "nodes": [
+        4459830817,
+        4459830999,
+        4459830998,
+        9205042879,
+        9205042878,
+        4459831561,
+        5296267419,
+        5296267420,
+        9205042958,
+        9205043258,
+        9205042959,
+        9205042968,
+        5296268921,
+        5296268922,
+        5296267418,
+        9205043267,
+        4459831350,
+        5296267417,
+        4459830817
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2501",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "school",
+        "name": "Bowman Middle School",
+        "wikidata": "Q4951332"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017075,
+      "center": {
+        "lat": 33.0234027,
+        "lon": -96.6769321
+      },
+      "nodes": [
+        4459830896,
+        9294003022,
+        4459830765,
+        9294003023,
+        4459830525,
+        4459830526,
+        4459830747,
+        4459830921,
+        4459830896
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2800",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "18th Street",
+        "amenity": "school",
+        "name": "Meadows Elementary School"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017076,
+      "center": {
+        "lat": 33.0336648,
+        "lon": -96.6836431
+      },
+      "nodes": [
+        4459831261,
+        4459831228,
+        4459831368,
+        9205043285,
+        4459830817,
+        5296267417,
+        4459831350,
+        9205043267,
+        5296267418,
+        5296268922,
+        5296268921,
+        9205042968,
+        9205042959,
+        9205043259,
+        9205042958,
+        5296267420,
+        5296267419,
+        4459831561,
+        5296267416,
+        4459831562,
+        4459831556,
+        4459831548,
+        4459831261
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2200",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Laurel Lane",
+        "amenity": "school",
+        "name": "Memorial Elemenary School"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017077,
+      "center": {
+        "lat": 33.0248659,
+        "lon": -96.6954357
+      },
+      "nodes": [
+        4459830987,
+        4459830425,
+        4459830445,
+        10223779352,
+        4459830985,
+        4459830987
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1330",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "19th Street",
+        "amenity": "school",
+        "name": "Mendenhall Elementary School"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449017097,
+      "center": {
+        "lat": 33.0142349,
+        "lon": -96.7197637
+      },
+      "nodes": [
+        4459829984,
+        9347427067,
+        4459830035,
+        4459830007,
+        9347468391,
+        4459829962,
+        9347468390,
+        9347468610,
+        9347427066,
+        9347468655,
+        4459829895,
+        9347468654,
+        4459829932,
+        4459829948,
+        9347468669,
+        9347468670,
+        9347468671,
+        9347427082,
+        4459829963,
+        9347468656,
+        9347468657,
+        9347427081,
+        9347427070,
+        9347468658,
+        9347468659,
+        9347468660,
+        4459829993,
+        9347468661,
+        9347468662,
+        9347468663,
+        9347427069,
+        4459830115,
+        9347468664,
+        4459830113,
+        9347468665,
+        4459830109,
+        9347468666,
+        4459830101,
+        9347468613,
+        9347468668,
+        9347468611,
+        9347468612,
+        4459829984
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1400",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Janwood Drive",
+        "amenity": "school",
+        "name": "Sigler Elementary School"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027681,
+      "center": {
+        "lat": 33.023179,
+        "lon": -96.6866673
+      },
+      "nodes": [
+        4459976429,
+        4459975415,
+        4459975412,
+        4459976428,
+        4459976429
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "lit": "yes",
+        "sport": "american_football;soccer;lacrosse",
+        "surface": "grass"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027685,
+      "center": {
+        "lat": 33.0237896,
+        "lon": -96.6881589
+      },
+      "nodes": [
+        4459976463,
+        4459976440,
+        4459976437,
+        4459976461,
+        4459976463
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "tennis"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027690,
+      "center": {
+        "lat": 33.0237893,
+        "lon": -96.6879987
+      },
+      "nodes": [
+        4459976462,
+        4459976438,
+        4459976436,
+        4459976460,
+        4459976462
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "tennis"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027692,
+      "center": {
+        "lat": 33.0237879,
+        "lon": -96.6876102
+      },
+      "nodes": [
+        4459976459,
+        4459976435,
+        4459976433,
+        4459976458,
+        4459976459
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "tennis"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027704,
+      "center": {
+        "lat": 33.0237871,
+        "lon": -96.6878066
+      },
+      "nodes": [
+        4459976457,
+        4459976432,
+        4459976431,
+        4459976456,
+        4459976457
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "tennis"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027706,
+      "center": {
+        "lat": 33.0224724,
+        "lon": -96.718993
+      },
+      "nodes": [
+        4459974902,
+        4459974901,
+        4459974929,
+        4459974928,
+        4459976590,
+        4459976591,
+        4459974902
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1701",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Alma Drive",
+        "amenity": "school",
+        "education": "school",
+        "grades": "9-12",
+        "mascot": "Titans",
+        "name": "Academy High School",
+        "operator": "Plano Independent School District",
+        "operator:short": "Plano ISD",
+        "operator:type": "public",
+        "operator:wikidata": "Q7201413",
+        "website": "https://www.pisd.edu/academy",
+        "wikidata": "Q16996816"
+      }
+    },
+    {
+      "type": "way",
+      "id": 449027708,
+      "center": {
+        "lat": 33.0228746,
+        "lon": -96.6882449
+      },
+      "nodes": [
+        4459974911,
+        10223779403,
+        4459976467,
+        9341847719,
+        4459976473,
+        8175672982,
+        9341847913,
+        9341847950,
+        9341847951,
+        8175672989,
+        4459976472,
+        4459974909,
+        4459974911
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1818",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "18th Street",
+        "amenity": "school",
+        "mascot": "Warriors",
+        "name": "Williams High School",
+        "phone": "+1-469-752-8300",
+        "website": "https://www.pisd.edu/williams"
+      }
+    },
+    {
+      "type": "way",
+      "id": 462210813,
+      "center": {
+        "lat": 33.0346737,
+        "lon": -96.7049907
+      },
+      "nodes": [
+        4576175170,
+        4576175171,
+        5373793279,
+        5373793278,
+        4576175172,
+        4576175173,
+        5373793274,
+        5373793275,
+        5373793277,
+        5373793276,
+        4576175174,
+        5373793286,
+        5373793285,
+        5373793284,
+        4576175175,
+        5373793282,
+        5373793283,
+        4576175176,
+        4576175177,
+        4576175178,
+        4576175179,
+        4576175180,
+        5373793281,
+        5373793280,
+        4576175170
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2740",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "fast_food",
+        "brand": "In-N-Out Burger",
+        "brand:wikidata": "Q1205312",
+        "building": "retail",
+        "building:use": "fast_food",
+        "cuisine": "burger",
+        "delivery": "no",
+        "drive_through": "yes",
+        "name": "In-N-Out Burger",
+        "outdoor_seating": "yes",
+        "takeaway": "yes",
+        "website": "https://locations.in-n-out.com/277"
+      }
+    },
+    {
+      "type": "way",
+      "id": 479586153,
+      "center": {
+        "lat": 33.028816,
+        "lon": -96.6845266
+      },
+      "nodes": [
+        4726603055,
+        5293973731,
+        4788525564,
+        5293973737,
+        5293973734,
+        4788525559,
+        5293973739,
+        5293973740,
+        5293973738,
+        5293974122,
+        5293974123,
+        4726603057,
+        4788525570,
+        4788525569,
+        4726603058,
+        4726603059,
+        5293973572,
+        5293973573,
+        4726603060,
+        5293973571,
+        5293973570,
+        4726603061,
+        4726603062,
+        4726603063,
+        5293973602,
+        5293973603,
+        5293973604,
+        5293973605,
+        4726603055
+      ],
+      "tags": {
+        "leisure": "park",
+        "name": "Willow Creek Park",
+        "natural": "grass"
+      }
+    },
+    {
+      "type": "way",
+      "id": 479586163,
+      "center": {
+        "lat": 33.0244054,
+        "lon": -96.6926564
+      },
+      "nodes": [
+        5296267403,
+        5296267394,
+        5296267395,
+        5296267393,
+        2500267588,
+        4726603748,
+        4726603745,
+        4726603746,
+        4726603747,
+        5296267396,
+        5296267397,
+        5296267398,
+        5296267399,
+        5296267400,
+        5296267401,
+        5296267402,
+        5296267403
+      ],
+      "tags": {
+        "addr:housenumber": "1501",
+        "addr:street": "18th Street",
+        "air_conditioning": "yes",
+        "amenity": "library",
+        "building": "civic",
+        "changing_table": "yes",
+        "internet_access": "wlan",
+        "name": "Harrington Library",
+        "opening_hours": "Mo-Th 09:00-21:00; Fr 09:00-18:00; Sa 10:00-18:00; Su 13:00-17:00",
+        "operator": "City of Plano",
+        "roof:shape": "hipped",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 479589469,
+      "center": {
+        "lat": 33.020823,
+        "lon": -96.7016729
+      },
+      "nodes": [
+        4726642592,
+        5286714170,
+        5286714169,
+        4726642593,
+        5286714171,
+        5286714172,
+        5286714173,
+        5286714174,
+        5286714175,
+        5286714176,
+        5286714168,
+        5286714167,
+        4726642596,
+        5286714166,
+        5286714165,
+        5286714164,
+        5286714163,
+        4726642597,
+        4726642598,
+        4726642599,
+        4726642600,
+        5286714162,
+        5286714161,
+        5286714160,
+        4726642601,
+        5286714159,
+        5286714158,
+        4726642602,
+        5286714157,
+        4726642603,
+        4726642604,
+        4726642592
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 479589471,
+      "center": {
+        "lat": 33.019891,
+        "lon": -96.7017539
+      },
+      "nodes": [
+        4726642605,
+        4726642606,
+        4726642607,
+        4726642608,
+        4726642609,
+        4726687799,
+        5286714121,
+        5286714122,
+        4726642610,
+        4726642605
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "901",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "building": "yes",
+        "name": "Interurban Railway Museum",
+        "opening_hours": "Tu-Th 11:00-16:00; Fr 10:30-16:00; Sa 13:00-17:00",
+        "tourism": "museum",
+        "website": "https://interurbanrailwaymuseum.org/",
+        "wheelchair": "yes",
+        "wikidata": "Q14711250"
+      }
+    },
+    {
+      "type": "way",
+      "id": 479808457,
+      "center": {
+        "lat": 33.0094973,
+        "lon": -96.7063441
+      },
+      "nodes": [
+        5828466398,
+        4728511634,
+        4728511635,
+        4728511636,
+        5828466399,
+        5828466410,
+        5828465084,
+        5828466400,
+        5828466409,
+        5828466397,
+        5828466401,
+        5828466402,
+        5828466403,
+        5828466404,
+        5828466405,
+        5828466406,
+        5828466407,
+        5828466408,
+        5828466398
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "601",
+        "addr:postcode": "75074",
+        "addr:street": "East Plano Parkway",
+        "amenity": "restaurant",
+        "building": "yes",
+        "contact:facebook": "https://www.facebook.com/lwplano/",
+        "cuisine": "regional",
+        "fax": "+1-972-633-1225",
+        "name": "Love & War in Texas",
+        "opening_hours": "Mo-Th 11:00-23:00; Fr-Sa 11:00-24:00; Su 11:00-22:00",
+        "outdoor_seating": "yes",
+        "phone": "+1-972-422-6201",
+        "website": "https://www.loveandwarintexas.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 484820608,
+      "center": {
+        "lat": 33.0162609,
+        "lon": -96.7178485
+      },
+      "nodes": [
+        4775732166,
+        4775732167,
+        4775732168,
+        4775732169,
+        4775732166
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "american_football"
+      }
+    },
+    {
+      "type": "way",
+      "id": 484820610,
+      "center": {
+        "lat": 33.0161889,
+        "lon": -96.7167717
+      },
+      "nodes": [
+        4775732170,
+        4775732171,
+        4775732172,
+        4775732173,
+        4775732170
+      ],
+      "tags": {
+        "access": "private",
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 484820620,
+      "center": {
+        "lat": 33.0189308,
+        "lon": -96.7176105
+      },
+      "nodes": [
+        4775732211,
+        4775732212,
+        4775732213,
+        4775732214,
+        4775732215,
+        4775732154,
+        4775732155,
+        4775732156,
+        4775732211
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 486150444,
+      "center": {
+        "lat": 33.0286301,
+        "lon": -96.6830804
+      },
+      "nodes": [
+        5293974166,
+        13954475709,
+        13954451266,
+        13954451292,
+        4788523613,
+        13954451280,
+        13954451299,
+        13954451230,
+        13954475705,
+        5293974161,
+        13954475708,
+        13954451263,
+        13954451274,
+        4788523617,
+        13954451255,
+        13954451296,
+        13954451229,
+        13954475712,
+        5293974166
+      ],
+      "tags": {
+        "access": "yes",
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 490754653,
+      "center": {
+        "lat": 33.010656,
+        "lon": -96.6809039
+      },
+      "nodes": [
+        4829422968,
+        4829422969,
+        4829422970,
+        4829422971,
+        4829422968
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "natural": "sand",
+        "sport": "volleyball",
+        "surface": "sand"
+      }
+    },
+    {
+      "type": "way",
+      "id": 490754654,
+      "center": {
+        "lat": 33.0103943,
+        "lon": -96.6816793
+      },
+      "nodes": [
+        4829422972,
+        4829422973,
+        4829422974,
+        4829422975,
+        4829422972
+      ],
+      "tags": {
+        "addr:housenumber": "900",
+        "addr:street": "Jupiter Road",
+        "brand": "QuikTrip",
+        "brand:wikidata": "Q7271953",
+        "building": "retail",
+        "check_date": "2026-01-04",
+        "diet:halal": "only",
+        "diet:kosher": "only",
+        "name": "QuikTrip",
+        "opening_hours": "24/7",
+        "roof:shape": "flat",
+        "shop": "convenience",
+        "short_name": "QT",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 490754655,
+      "center": {
+        "lat": 33.0103476,
+        "lon": -96.6811114
+      },
+      "nodes": [
+        11725887009,
+        4829422976,
+        4829422977,
+        11725887010,
+        11725887011,
+        11725887012,
+        11725887013,
+        11725887014,
+        11725887009
+      ],
+      "tags": {
+        "building": "commercial",
+        "leisure": "sports_centre",
+        "name": "MadFrog Volleyball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 490758424,
+      "center": {
+        "lat": 33.0083397,
+        "lon": -96.7106888
+      },
+      "nodes": [
+        4829457919,
+        4829458822,
+        4829458824,
+        13368273458,
+        13368273457,
+        13368273456,
+        4829458825,
+        4829458826,
+        4829457919
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "300",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "West Plano Parkway",
+        "amenity": "fast_food",
+        "branch": "Plano Parkway",
+        "brand": "Chick-fil-A",
+        "brand:wikidata": "Q491516",
+        "building": "yes",
+        "cuisine": "chicken",
+        "delivery": "yes",
+        "drive_through": "yes",
+        "indoor_seating": "yes",
+        "internet_access": "wlan",
+        "name": "Chick-fil-A",
+        "opening_hours": "Mo-Sa 06:00-22:00; Su off",
+        "phone": "+1 972-578-9477",
+        "ref": "04472",
+        "takeaway": "yes",
+        "website": "https://www.chick-fil-a.com/locations/tx/plano-parkway"
+      }
+    },
+    {
+      "type": "way",
+      "id": 490758425,
+      "center": {
+        "lat": 33.0094749,
+        "lon": -96.7139975
+      },
+      "nodes": [
+        4829458831,
+        4829458832,
+        4829458833,
+        4829458834,
+        4829458831
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "building": "retail",
+        "cuisine": "chinese",
+        "dinner": "buffet",
+        "lunch": "buffet",
+        "name": "Great Wall",
+        "opening_hours": "11:00-21:30",
+        "self_service": "yes",
+        "toilets": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 519761811,
+      "center": {
+        "lat": 33.0241727,
+        "lon": -96.7120029
+      },
+      "nodes": [
+        5067572224,
+        5067572225,
+        5067572226,
+        5067572227,
+        5067572224
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "baseball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 519761812,
+      "center": {
+        "lat": 33.0236424,
+        "lon": -96.7115017
+      },
+      "nodes": [
+        5067572228,
+        5067572229,
+        5067572230,
+        5067572231,
+        5067572228
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "baseball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 533711915,
+      "center": {
+        "lat": 33.0282966,
+        "lon": -96.7134576
+      },
+      "nodes": [
+        5177473800,
+        5177473797,
+        5177473798,
+        5177473795,
+        5177473793,
+        5177473794,
+        5177473796,
+        5177473799,
+        5177473800
+      ],
+      "tags": {
+        "brand": "QuikTrip",
+        "brand:wikidata": "Q7271953",
+        "building": "retail",
+        "name": "QuikTrip",
+        "shop": "convenience",
+        "short_name": "QT"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543922538,
+      "center": {
+        "lat": 33.023148,
+        "lon": -96.7123969
+      },
+      "nodes": [
+        5257974255,
+        5257974256,
+        5266187824,
+        5266187829,
+        5257974257,
+        5266187828,
+        5257974258,
+        5257974259,
+        5257974260,
+        5266187825,
+        5257974261,
+        5257974262,
+        5257974263,
+        5257974264,
+        5257974265,
+        5257974266,
+        5257974267,
+        5257974268,
+        5257974269,
+        5257974271,
+        5266187831,
+        5257974272,
+        5266187830,
+        5257974273,
+        5257974274,
+        5257974275,
+        5257974276,
+        5257974277,
+        5257974278,
+        5266187821,
+        5257974279,
+        5257974280,
+        5257974281,
+        5257974282,
+        5257974283,
+        5257974255
+      ],
+      "tags": {
+        "access": "yes",
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543922539,
+      "center": {
+        "lat": 33.0234245,
+        "lon": -96.7122523
+      },
+      "nodes": [
+        5257974284,
+        13767750886,
+        5067572245,
+        5257974285,
+        5257974286,
+        5257974287,
+        5257974288,
+        5257974289,
+        5257974290,
+        5257974291,
+        5257974292,
+        5258363281,
+        5257974293,
+        5257974284
+      ],
+      "tags": {
+        "landuse": "recreation_ground",
+        "leisure": "park",
+        "name": "Harrington Park"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543970682,
+      "center": {
+        "lat": 33.0266748,
+        "lon": -96.7105862
+      },
+      "nodes": [
+        5258363258,
+        5258363259,
+        5258363260,
+        5258363261,
+        5258363258
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "building": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543970693,
+      "center": {
+        "lat": 33.0256878,
+        "lon": -96.7171266
+      },
+      "nodes": [
+        5258363289,
+        5258363290,
+        5258363291,
+        5258363292,
+        5258363293,
+        5258363294,
+        5258363295,
+        5258363296,
+        5258363297,
+        5258363298,
+        5258363299,
+        5258363300,
+        5258363301,
+        5258363302,
+        5258363303,
+        5258363304,
+        5258363305,
+        5258363306,
+        5258363289
+      ],
+      "tags": {
+        "brand": "RaceTrac",
+        "brand:wikidata": "Q735942",
+        "building": "retail",
+        "name": "RaceTrac",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543970695,
+      "center": {
+        "lat": 33.0206827,
+        "lon": -96.717114
+      },
+      "nodes": [
+        5258363307,
+        5258363308,
+        5258363309,
+        5258363310,
+        5258363311,
+        5258363312,
+        5258363313,
+        5258363314,
+        5258363315,
+        5258363316,
+        5258363317,
+        5258363318,
+        5258363319,
+        5258363320,
+        5258365021,
+        5258365022,
+        5258363307
+      ],
+      "tags": {
+        "amenity": "bank",
+        "building": "yes",
+        "drive_through": "yes",
+        "name": "Legacy Texas Bank"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543975629,
+      "center": {
+        "lat": 33.0259487,
+        "lon": -96.7157739
+      },
+      "nodes": [
+        5258402771,
+        5258402772,
+        5258402773,
+        5258402774,
+        5258402771
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "building": "yes",
+        "cuisine": "greek",
+        "name": "Kostas Cafe"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543975652,
+      "center": {
+        "lat": 33.029822,
+        "lon": -96.7141979
+      },
+      "nodes": [
+        5258404250,
+        5258404251,
+        5258404252,
+        5258404253,
+        5258404250
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "multi",
+        "surface": "paved"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543979036,
+      "center": {
+        "lat": 33.020626,
+        "lon": -96.7117302
+      },
+      "nodes": [
+        5258432677,
+        6100948010,
+        6100948013,
+        6100948012,
+        6100948011,
+        5258432678,
+        5258432679,
+        5258432680,
+        5258432677
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "brand": "Outback Steakhouse",
+        "brand:wikidata": "Q1064893",
+        "building": "yes",
+        "cuisine": "american;steak",
+        "name": "Outback Steakhouse"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543979042,
+      "center": {
+        "lat": 33.020245,
+        "lon": -96.7104155
+      },
+      "nodes": [
+        5258432685,
+        5258432686,
+        5258432687,
+        5258432688,
+        5258432685
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1501",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "brand": "7-Eleven",
+        "brand:wikidata": "Q259340",
+        "building": "retail",
+        "contact:website": "https://www.7-eleven.com/locations/tx/plano/1501-central-expwy-34118",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543987616,
+      "center": {
+        "lat": 33.0286951,
+        "lon": -96.71204
+      },
+      "nodes": [
+        5258511523,
+        5258511524,
+        5258511525,
+        5258511526,
+        5258511523
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "building": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543989175,
+      "center": {
+        "lat": 33.0255627,
+        "lon": -96.7108568
+      },
+      "nodes": [
+        5258521910,
+        5258521911,
+        5258521912,
+        5258521913,
+        5258521914,
+        5258521915,
+        5258521916,
+        5258521917,
+        5258521918,
+        5258521919,
+        5258521910
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1855",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "North Central Expressway",
+        "building": "yes",
+        "name": "Dallas Vintage Shop",
+        "opening_hours": "Mo-Sa 10:00-19:00",
+        "second_hand": "yes",
+        "shop": "clothes",
+        "website": "https://dallasvintageshop.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 543989190,
+      "center": {
+        "lat": 33.0196155,
+        "lon": -96.7138224
+      },
+      "nodes": [
+        5258527003,
+        5258527004,
+        5258527005,
+        5258527006,
+        5258527003
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "701",
+        "addr:postcode": "75075-8824",
+        "addr:state": "TX",
+        "addr:street": "West 15th Street",
+        "amenity": "fast_food",
+        "building": "yes",
+        "drive_through": "yes",
+        "name": "Angie's",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 548208893,
+      "center": {
+        "lat": 33.0253886,
+        "lon": -96.692331
+      },
+      "nodes": [
+        5296267404,
+        5296267405,
+        5296267406,
+        5296267407,
+        5296267404
+      ],
+      "tags": {
+        "landuse": "recreation_ground",
+        "name": "Sgt. Mike McCreary Sports Fields"
+      }
+    },
+    {
+      "type": "way",
+      "id": 548208894,
+      "center": {
+        "lat": 33.0330924,
+        "lon": -96.6845526
+      },
+      "nodes": [
+        5296268923,
+        5296268924,
+        5296268925,
+        9205043315,
+        9205043469,
+        5296268926,
+        5296268923
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "basketball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 549757564,
+      "center": {
+        "lat": 33.0314126,
+        "lon": -96.7067625
+      },
+      "nodes": [
+        5310452185,
+        13741736202,
+        13741736203,
+        5310452182,
+        13741686000,
+        12387917184,
+        5310452183,
+        5310452184,
+        5310452185
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2500",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "North Central Expressway",
+        "amenity": "restaurant",
+        "building": "retail",
+        "cuisine": "thai;japanese",
+        "diet:vegetarian": "yes",
+        "name": "Zenna",
+        "opening_hours": "Mo-Fr 11:00-27:00; Sa-Su 16:00-27:00",
+        "phone": "+1-214-473-9797",
+        "website": "https://zennarestaurant.com"
+      }
+    },
+    {
+      "type": "way",
+      "id": 557850427,
+      "center": {
+        "lat": 33.0107647,
+        "lon": -96.6970968
+      },
+      "nodes": [
+        5379808249,
+        5379808248,
+        5379808247,
+        5379808246,
+        5379808245,
+        5379808244,
+        5379808237,
+        5379808243,
+        5379808242,
+        5379808241,
+        5379808240,
+        5379808239,
+        5379808238,
+        5379808249
+      ],
+      "tags": {
+        "addr:housenumber": "1200",
+        "addr:street": "Capital Avenue",
+        "amenity": "post_office",
+        "building": "commercial",
+        "name": "FedEx Ship Center",
+        "operator": "FedEx"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002616,
+      "center": {
+        "lat": 33.0089469,
+        "lon": -96.7051259
+      },
+      "nodes": [
+        4728511623,
+        4728511624,
+        4728511625,
+        4728511632,
+        4728511633,
+        4728511622,
+        4728511623
+      ],
+      "tags": {
+        "brand": "RaceTrac",
+        "brand:wikidata": "Q735942",
+        "building": "retail",
+        "name": "RaceTrac",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002622,
+      "center": {
+        "lat": 33.0187111,
+        "lon": -96.6973862
+      },
+      "nodes": [
+        5418355461,
+        5418355460,
+        5418355459,
+        5418355458,
+        12389365012,
+        12389365015,
+        5418355461
+      ],
+      "tags": {
+        "amenity": "bank",
+        "building": "retail",
+        "name": "LegacyTexas"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002626,
+      "center": {
+        "lat": 33.0184063,
+        "lon": -96.6829303
+      },
+      "nodes": [
+        5418355519,
+        5418355516,
+        5418355517,
+        5418355518,
+        5418355519
+      ],
+      "tags": {
+        "building": "retail",
+        "name": "One Stop Food Store",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002627,
+      "center": {
+        "lat": 33.0176897,
+        "lon": -96.682902
+      },
+      "nodes": [
+        5418355622,
+        5418355621,
+        5418355520,
+        5418355623,
+        5418355622
+      ],
+      "tags": {
+        "amenity": "fast_food",
+        "building": "retail",
+        "cuisine": "chicken",
+        "name": "Pollo Regio",
+        "website": "https://www.polloregio.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002628,
+      "center": {
+        "lat": 33.0184472,
+        "lon": -96.683375
+      },
+      "nodes": [
+        5418355626,
+        5418355625,
+        2814742592,
+        5418355624,
+        5418355626
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2301",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East 14th Street",
+        "alt_name": "Kentucky Fried Chicken",
+        "amenity": "fast_food",
+        "brand": "KFC",
+        "brand:wikidata": "Q524757",
+        "building": "retail",
+        "cuisine": "chicken",
+        "name": "KFC",
+        "takeaway": "yes",
+        "website": "https://locations.kfc.com/tx/plano/2301-east-14th-street"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002630,
+      "center": {
+        "lat": 33.0177832,
+        "lon": -96.6812441
+      },
+      "nodes": [
+        5418355638,
+        5418355637,
+        5418355633,
+        5418355634,
+        5418355636,
+        5418355631,
+        5418355632,
+        5418355635,
+        5418355638
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "2528",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "14th Street",
+        "amenity": "fast_food",
+        "brand": "Popeyes",
+        "brand:wikidata": "Q1330910",
+        "building": "retail",
+        "cuisine": "chicken",
+        "delivery": "yes",
+        "drive_through": "yes",
+        "indoor_seating": "yes",
+        "name": "Popeyes",
+        "official_name": "Popeyes Louisiana Kitchen",
+        "opening_hours": "10:00-22:00",
+        "phone": "+1 972-423-5410",
+        "takeaway": "yes",
+        "website": "https://www.popeyes.com/store-locator/store/restaurant_81673"
+      }
+    },
+    {
+      "type": "way",
+      "id": 562002631,
+      "center": {
+        "lat": 33.0185445,
+        "lon": -96.6815647
+      },
+      "nodes": [
+        6231332896,
+        5418355645,
+        5418355646,
+        5418355643,
+        5418355644,
+        6231332895,
+        6231332896
+      ],
+      "tags": {
+        "amenity": "bank",
+        "brand": "BBVA Compass",
+        "brand:wikidata": "Q4835088",
+        "building": "retail",
+        "name": "BBVA Compass",
+        "official_name": "BBVA Compass Bancshares",
+        "website": "https://www.bbvacompass.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 568517553,
+      "center": {
+        "lat": 33.0178173,
+        "lon": -96.6799649
+      },
+      "nodes": [
+        5469361877,
+        5469361883,
+        5469361882,
+        5469361881,
+        5469361880,
+        5469361876,
+        5469361878,
+        5469361879,
+        5469361877
+      ],
+      "tags": {
+        "addr:housenumber": "2600",
+        "addr:street": "14th Street",
+        "amenity": "restaurant",
+        "building": "yes",
+        "building:levels": "1",
+        "cuisine": "chinese",
+        "email": "jack@mr-wok.com",
+        "name": "Mr. Wok",
+        "opening_hours": "Mo-Sa 11:00-22:00; Su off",
+        "phone": "+1 972-881-1888",
+        "smoking": "no",
+        "takeaway": "yes",
+        "website": "https://www.mr-wok.com/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 595886013,
+      "center": {
+        "lat": 33.0081475,
+        "lon": -96.7138939
+      },
+      "nodes": [
+        5678123134,
+        5678123135,
+        5678123136,
+        5678123137,
+        5678123134
+      ],
+      "tags": {
+        "building": "yes",
+        "shop": "laundry"
+      }
+    },
+    {
+      "type": "way",
+      "id": 595886030,
+      "center": {
+        "lat": 33.0065628,
+        "lon": -96.7133258
+      },
+      "nodes": [
+        5678123191,
+        5678123190,
+        5678123186,
+        5678123189,
+        5678123188,
+        5678123187,
+        5678123193,
+        5678123192,
+        5678123191
+      ],
+      "tags": {
+        "building": "yes",
+        "leisure": "fitness_centre",
+        "name": "Clubhouse"
+      }
+    },
+    {
+      "type": "way",
+      "id": 639530151,
+      "center": {
+        "lat": 33.0234535,
+        "lon": -96.6989477
+      },
+      "nodes": [
+        6026107943,
+        6026107944,
+        6026107945,
+        6026107946,
+        6026107943
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1726",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "K Avenue",
+        "amenity": "restaurant",
+        "building": "yes",
+        "name": "Into My Garden Tea Room"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650307015,
+      "center": {
+        "lat": 33.02074,
+        "lon": -96.7135457
+      },
+      "nodes": [
+        5258543985,
+        5258543994,
+        5258543995,
+        5258543996,
+        5258543997,
+        5258545735,
+        5258543991,
+        5258543992,
+        5258543985
+      ],
+      "tags": {
+        "brand": "Barnes & Noble",
+        "brand:wikidata": "Q795454",
+        "building": "retail",
+        "name": "Barnes & Noble",
+        "shop": "books"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650307016,
+      "center": {
+        "lat": 33.02078,
+        "lon": -96.7145466
+      },
+      "nodes": [
+        5258543986,
+        5258544002,
+        5258544003,
+        5258544004,
+        5258544005,
+        5258545729,
+        5258545730,
+        5258543999,
+        5258544000,
+        5258543986
+      ],
+      "tags": {
+        "brand": "Old Navy",
+        "brand:wikidata": "Q2735242",
+        "building": "retail",
+        "name": "Old Navy",
+        "shop": "clothes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650307023,
+      "center": {
+        "lat": 33.0199478,
+        "lon": -96.7114261
+      },
+      "nodes": [
+        6100948015,
+        5258526984,
+        5258526985,
+        5258526986,
+        5258526987,
+        5258526988,
+        5258526989,
+        5258526990,
+        6100948016,
+        6100948020,
+        6100948021,
+        6100948014,
+        6100948017,
+        6100948018,
+        6100948019,
+        6100948015
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1505",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Central Expressway",
+        "amenity": "restaurant",
+        "building": "yes",
+        "building:levels": "1",
+        "cuisine": "asian",
+        "name": "Wu Wei Din Chinese Cuisine",
+        "opening_hours": "Su,Tu-Th 11:00-15:00,16:00-21:00; Fr-Sa 11:00-15:00,16:00-21:30",
+        "phone": "+1-469-626-0058",
+        "website": "https://www.wuweidinchinesecuisine.com/",
+        "website:menu": "https://pos.chowbus.com/online-ordering/store/wu-wei-din-plano-75/21419"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650352284,
+      "center": {
+        "lat": 33.0369227,
+        "lon": -96.6983465
+      },
+      "nodes": [
+        6101250655,
+        6101250656,
+        6101250660,
+        6101250659,
+        6101250658,
+        6101250657,
+        12558271045,
+        6101250655
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1100",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "East Parker Road",
+        "amenity": "fast_food",
+        "brand": "Long John Silver's",
+        "brand:wikidata": "Q1535221",
+        "building": "retail",
+        "cuisine": "seafood",
+        "name": "Long John Silver's",
+        "takeaway": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650380279,
+      "center": {
+        "lat": 33.0177356,
+        "lon": -96.6820322
+      },
+      "nodes": [
+        6101392330,
+        6101392334,
+        6101392328,
+        6101392327,
+        6101392331,
+        6101392333,
+        6101392330
+      ],
+      "tags": {
+        "building": "retail",
+        "shop": "convenience"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650380454,
+      "center": {
+        "lat": 33.0258463,
+        "lon": -96.7089993
+      },
+      "nodes": [
+        6101393250,
+        6101393255,
+        6101393253,
+        6101393260,
+        6101393261,
+        6101393252,
+        6101393251,
+        6101393249,
+        6101393250
+      ],
+      "tags": {
+        "amenity": "restaurant",
+        "brand": "Denny's",
+        "building": "retail",
+        "building:levels": "1",
+        "cuisine": "american",
+        "name": "Denny's",
+        "smoking": "no",
+        "takeaway": "yes",
+        "toilets": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650380733,
+      "center": {
+        "lat": 33.0066435,
+        "lon": -96.6987175
+      },
+      "nodes": [
+        6101394573,
+        6101394575,
+        6101394571,
+        6101394569,
+        6101394573
+      ],
+      "tags": {
+        "addr:housenumber": "650",
+        "addr:street": "K Avenue",
+        "brand": "QuikTrip",
+        "brand:wikidata": "Q7271953",
+        "building": "retail",
+        "name": "QuikTrip",
+        "shop": "convenience",
+        "short_name": "QT"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650391282,
+      "center": {
+        "lat": 33.0159734,
+        "lon": -96.6829982
+      },
+      "nodes": [
+        6101477776,
+        6101477779,
+        6101477774,
+        6101477772,
+        6101477776
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1205",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "fast_food",
+        "brand": "Jack in the Box",
+        "brand:wikidata": "Q1538507",
+        "building": "yes",
+        "cuisine": "burger",
+        "drive_through": "yes",
+        "name": "Jack in the Box",
+        "phone": "+1 972-423-0826",
+        "takeaway": "yes",
+        "website": "https://locations.jackinthebox.com/us/tx/plano/1205-jupiter-rd"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650391283,
+      "center": {
+        "lat": 33.0156504,
+        "lon": -96.6829637
+      },
+      "nodes": [
+        6101477773,
+        6101477775,
+        6101477778,
+        6101477777,
+        6101477773
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1201",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "fast_food",
+        "brand": "Jimmy John's",
+        "brand:wikidata": "Q1689380",
+        "building": "yes",
+        "cuisine": "sandwich",
+        "name": "Jimmy John's",
+        "official_name": "Jimmy John's Gourmet Sandwiches",
+        "phone": "+1 972-398-1600",
+        "takeaway": "yes",
+        "website": "https://locations.jimmyjohns.com/tx/plano/sandwiches-974.html"
+      }
+    },
+    {
+      "type": "way",
+      "id": 650391286,
+      "center": {
+        "lat": 33.017379,
+        "lon": -96.6819794
+      },
+      "nodes": [
+        6994255028,
+        6101477784,
+        6101477886,
+        6101477887,
+        6994255028
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1340",
+        "addr:postcode": "75074",
+        "addr:state": "TX",
+        "addr:street": "Jupiter Road",
+        "amenity": "fast_food",
+        "brand": "Taco Bell",
+        "brand:wikidata": "Q752941",
+        "building": "yes",
+        "cuisine": "tex-mex",
+        "name": "Taco Bell",
+        "opening_hours": "Mo-Th 08:00-02:00; Fr-Sa 08:00-03:00; Su 08:00-02:00",
+        "phone": "+1 214-473-8415",
+        "takeaway": "yes",
+        "website": "https://locations.tacobell.com/tx/plano/1340-jupiter-rd.html"
+      }
+    },
+    {
+      "type": "way",
+      "id": 653621369,
+      "center": {
+        "lat": 33.0201777,
+        "lon": -96.7072732
+      },
+      "nodes": [
+        6125415021,
+        6125415010,
+        11778832674,
+        11778832675,
+        6125415083,
+        6125415050,
+        11778832670,
+        11778832671,
+        11778832673,
+        11778832672,
+        6125415021
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:country": "US",
+        "addr:housenumber": "605",
+        "addr:postcode": "75074-5709",
+        "addr:state": "TX",
+        "addr:street": "East 15th Street",
+        "air_conditioning": "yes",
+        "amenity": "fast_food",
+        "brand": "McDonald's",
+        "brand:wikidata": "Q38076",
+        "building": "yes",
+        "changing_table": "yes",
+        "check_date": "2026-05-03",
+        "check_date:diet:gluten_free": "2026-05-03",
+        "check_date:diet:halal": "2026-05-03",
+        "check_date:diet:kosher": "2026-05-03",
+        "check_date:diet:vegan": "2026-05-03",
+        "check_date:diet:vegetarian": "2026-05-03",
+        "check_date:opening_hours": "2026-05-03",
+        "check_date:opening_hours:drive_through": "2024-02-01",
+        "check_date:smoking": "2026-05-03",
+        "check_date:toilets:wheelchair": "2026-05-03",
+        "cuisine": "burger",
+        "diet:gluten_free": "only",
+        "diet:halal": "no",
+        "diet:kosher": "no",
+        "diet:vegan": "no",
+        "diet:vegetarian": "only",
+        "drive_through": "yes",
+        "indoor_seating": "yes",
+        "internet_access": "wlan",
+        "name": "McDonald's",
+        "opening_hours": "Mo-Su 05:00-22:00",
+        "opening_hours:drive_through": "Mo-Th 05:00-24:00; Fr-Sa 05:00-04:00; Su 05:00-24:00",
+        "phone": "+1 972-633-5135",
+        "smoking": "outside",
+        "takeaway": "yes",
+        "toilets": "yes",
+        "toilets:wheelchair": "limited",
+        "website": "https://www.mcdonalds.com/us/en-us/location/2803.html",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "way",
+      "id": 653621402,
+      "center": {
+        "lat": 33.0192715,
+        "lon": -96.7003127
+      },
+      "nodes": [
+        6125415261,
+        6125415266,
+        6125415268,
+        12981158209,
+        12981158213,
+        6125415261
+      ],
+      "tags": {
+        "building": "yes",
+        "name": "North Texas Masonic Historical Museum & Library",
+        "tourism": "museum"
+      }
+    },
+    {
+      "type": "way",
+      "id": 653621404,
+      "center": {
+        "lat": 33.0207745,
+        "lon": -96.7035048
+      },
+      "nodes": [
+        6125415290,
+        6125415280,
+        6125415283,
+        6125415294,
+        6125415296,
+        6125415287,
+        6125415291,
+        6125415284,
+        6125415288,
+        6125415298,
+        6125415281,
+        6125415297,
+        6125415279,
+        6125415292,
+        6125415295,
+        6125415289,
+        6125415293,
+        6125415282,
+        6125415286,
+        6125415285,
+        6125415290
+      ],
+      "tags": {
+        "amenity": "theatre",
+        "building": "yes",
+        "name": "Courtyard Theater",
+        "phone": "+1 972-941-5600",
+        "website": "https://www.plano.gov/1067/Courtyard-Theater"
+      }
+    },
+    {
+      "type": "way",
+      "id": 878814623,
+      "center": {
+        "lat": 33.0223473,
+        "lon": -96.6877212
+      },
+      "nodes": [
+        8175672960,
+        8175672961,
+        8175672962,
+        8175672963,
+        9341847851,
+        8175672964,
+        9341847850,
+        8175672965,
+        9341847994,
+        8175672966,
+        8175672967,
+        8175672968,
+        8175672969,
+        8175672970,
+        8175672971,
+        8175672972,
+        8175672973,
+        8175672974,
+        8175672975,
+        8175672976,
+        8175672977,
+        8175672960
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "baseball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 878814624,
+      "center": {
+        "lat": 33.0220225,
+        "lon": -96.6866351
+      },
+      "nodes": [
+        8175672978,
+        8175672979,
+        8175672980,
+        8175672981,
+        8175672978
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "american_football"
+      }
+    },
+    {
+      "type": "way",
+      "id": 956958203,
+      "center": {
+        "lat": 33.0193589,
+        "lon": -96.706374
+      },
+      "nodes": [
+        8855249096,
+        8855249090,
+        8855249089,
+        8855249093,
+        8855249091,
+        8855249092,
+        8855249094,
+        8855249095,
+        8855249096
+      ],
+      "tags": {
+        "addr:housenumber": "700",
+        "addr:street": "East 15th Street",
+        "amenity": "restaurant",
+        "building": "yes",
+        "contact:phone": "+1-469-229-0838",
+        "contact:website": "http://fishshackplano.com/",
+        "name": "Fish Shack"
+      }
+    },
+    {
+      "type": "way",
+      "id": 992806030,
+      "center": {
+        "lat": 33.0072165,
+        "lon": -96.7114935
+      },
+      "nodes": [
+        9172549613,
+        9172549614,
+        9172549615,
+        9172549616,
+        9172587117,
+        9172587118,
+        9172587119,
+        9172587120,
+        9172587121,
+        9172587122,
+        9172587123,
+        9172587124,
+        9172587125,
+        9172587126,
+        9172587127,
+        9172587128,
+        9172587129,
+        9172549613
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 992806031,
+      "center": {
+        "lat": 33.0075004,
+        "lon": -96.7109578
+      },
+      "nodes": [
+        9172587130,
+        9172587143,
+        9172587131,
+        9172587132,
+        9172587249,
+        9172587133,
+        9172587134,
+        9172587136,
+        9172587135,
+        9187400726,
+        9172587130
+      ],
+      "tags": {
+        "amenity": "school"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1013185499,
+      "center": {
+        "lat": 33.0143646,
+        "lon": -96.7186761
+      },
+      "nodes": [
+        9347468368,
+        9347468380,
+        9347468369,
+        9347468370,
+        9347468371,
+        9347468372,
+        9347468373,
+        9347468374,
+        9347468375,
+        9347468376,
+        9347468377,
+        9347468378,
+        9347468379,
+        9347468683,
+        9347468368
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1013185508,
+      "center": {
+        "lat": 33.0140851,
+        "lon": -96.7186957
+      },
+      "nodes": [
+        9347468579,
+        9347468577,
+        9347468580,
+        9347468677,
+        9347468581,
+        9347468678,
+        9347468679,
+        9347468582,
+        9347468583,
+        9347468584,
+        9347468579
+      ],
+      "tags": {
+        "hoops": "2",
+        "leisure": "pitch",
+        "sport": "basketball",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1117837644,
+      "center": {
+        "lat": 33.0262614,
+        "lon": -96.6935908
+      },
+      "nodes": [
+        10223779375,
+        10223779374,
+        10223779373,
+        10223779372,
+        10223779375
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1117837645,
+      "center": {
+        "lat": 33.0262587,
+        "lon": -96.6940336
+      },
+      "nodes": [
+        10223779379,
+        10223779378,
+        10223779377,
+        10223779376,
+        10223779379
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1137910136,
+      "center": {
+        "lat": 33.0029954,
+        "lon": -96.7038381
+      },
+      "nodes": [
+        10606791838,
+        10606791839,
+        10606791840,
+        10606791841,
+        10606791838
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "beachvolleyball",
+        "surface": "sand"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1262001096,
+      "center": {
+        "lat": 33.0106546,
+        "lon": -96.6810457
+      },
+      "nodes": [
+        11725887015,
+        11725887016,
+        11725887017,
+        11725887018,
+        11725887015
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "natural": "sand",
+        "sport": "volleyball",
+        "surface": "sand"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1262001097,
+      "center": {
+        "lat": 33.0106539,
+        "lon": -96.6811832
+      },
+      "nodes": [
+        11725887019,
+        11725887020,
+        11725887021,
+        11725887022,
+        11725887019
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "natural": "sand",
+        "sport": "volleyball",
+        "surface": "sand"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1262001098,
+      "center": {
+        "lat": 33.0106516,
+        "lon": -96.6813223
+      },
+      "nodes": [
+        11725887023,
+        11725887024,
+        11725887025,
+        11725887026,
+        11725887023
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "natural": "sand",
+        "sport": "volleyball",
+        "surface": "sand"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1267442659,
+      "center": {
+        "lat": 33.0246023,
+        "lon": -96.7147664
+      },
+      "nodes": [
+        11771559609,
+        13337331839,
+        13337331838,
+        11771559610,
+        11771559611,
+        11771559612,
+        11771559615,
+        13337331840,
+        13337331841,
+        13337331842,
+        13337331843,
+        13337331844,
+        13337331845,
+        11771559616,
+        11771559617,
+        11771559618,
+        11771559609
+      ],
+      "tags": {
+        "addr:city": "Plano",
+        "addr:housenumber": "1800",
+        "addr:postcode": "75075",
+        "addr:state": "TX",
+        "addr:street": "Alma Drive",
+        "amenity": "arts_centre",
+        "building": "yes",
+        "name": "Robinson Fine Arts Center",
+        "official_name": "Robbie & Lynore Robinson Fine Arts Center",
+        "operator": "Plano Independent School District",
+        "operator:short": "Plano ISD",
+        "operator:type": "public",
+        "operator:wikidata": "Q7201413",
+        "phone": "+1-972-905-8922",
+        "website": "https://rfac.pisd.edu/"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1314195956,
+      "center": {
+        "lat": 33.0246493,
+        "lon": -96.6957204
+      },
+      "nodes": [
+        12163811413,
+        12163811414,
+        12163811415,
+        12163811416,
+        12163811413
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "basketball"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1314195957,
+      "center": {
+        "lat": 33.0247636,
+        "lon": -96.6954652
+      },
+      "nodes": [
+        12163811433,
+        12163811418,
+        12163811419,
+        12163811420,
+        12163811421,
+        12163811422,
+        12163811423,
+        12163811430,
+        12163811431,
+        12163811432,
+        12163811424,
+        12163811425,
+        12163811426,
+        12163811427,
+        12163811428,
+        12163811429,
+        12163811433
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1314195958,
+      "center": {
+        "lat": 33.0251507,
+        "lon": -96.6965986
+      },
+      "nodes": [
+        12163811440,
+        12163811441,
+        12163811442,
+        12163811443,
+        12163811444,
+        12163811445,
+        12163811446,
+        12163811447,
+        12163811448,
+        12163811449,
+        12163811450,
+        12163811451,
+        12163811452,
+        12163811453,
+        12163811454,
+        12163811440
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1314195959,
+      "center": {
+        "lat": 33.0242895,
+        "lon": -96.6971114
+      },
+      "nodes": [
+        12163811455,
+        12163811456,
+        12163811457,
+        12163811458,
+        12163811459,
+        12163811460,
+        12163811461,
+        12163811462,
+        12163811463,
+        12163811464,
+        12163811471,
+        12163811465,
+        12163811470,
+        12163811466,
+        12163811468,
+        12163811469,
+        12163811467,
+        12163811455
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1314195960,
+      "center": {
+        "lat": 33.0244789,
+        "lon": -96.6969999
+      },
+      "nodes": [
+        12163811486,
+        12163811487,
+        12163811488,
+        12163811489,
+        12163811490,
+        12163811472,
+        12163811473,
+        12163811474,
+        12163811475,
+        12163811476,
+        12163811477,
+        12163811484,
+        12163811485,
+        12163811478,
+        12163811479,
+        12163811480,
+        12163811481,
+        12163811482,
+        12163811483,
+        12163811486
+      ],
+      "tags": {
+        "leisure": "playground"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1356841796,
+      "center": {
+        "lat": 33.0369927,
+        "lon": -96.6988466
+      },
+      "nodes": [
+        12558270930,
+        12558270931,
+        12558270932,
+        12558270933,
+        12558270915,
+        12558270916,
+        12558270917,
+        12558270918,
+        12558270919,
+        12558270920,
+        12558270928,
+        12558270929,
+        12558270921,
+        12558270922,
+        12558270923,
+        12558270924,
+        12558270925,
+        12558270926,
+        12558270927,
+        12558270930
+      ],
+      "tags": {
+        "leisure": "garden"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1360141736,
+      "center": {
+        "lat": 33.0236665,
+        "lon": -96.6889069
+      },
+      "nodes": [
+        12590640466,
+        12590640467,
+        12590640468,
+        12590640469,
+        12590640470,
+        12590640471,
+        12590640466
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "marching_band"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1531084723,
+      "center": {
+        "lat": 33.0287644,
+        "lon": -96.6841146
+      },
+      "nodes": [
+        13954451260,
+        13954451267,
+        13954451284,
+        13954451286,
+        13954451260
+      ],
+      "tags": {
+        "leisure": "pitch",
+        "sport": "basketball"
+      }
+    }
+  ]
+}
