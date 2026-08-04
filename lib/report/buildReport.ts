@@ -8,7 +8,9 @@ import { overallScore } from '@/lib/scoring/overall';
 import { transitScore } from '@/lib/scoring/transit';
 import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
 import { walkScore } from '@/lib/scoring/walk';
-import type { Coordinates, Report, StreetContext, TransitStop } from '@/lib/report/types';
+import type {
+  Coordinates, DataSource, Report, StreetContext, TransitStop,
+} from '@/lib/report/types';
 
 /** Fetch at the widest radius any score needs, then let each score filter down. */
 const FETCH_RADIUS_M = 8000;
@@ -38,10 +40,17 @@ export async function buildReport(
   const amenities = amenityResult.value;
 
   // Transit and street context are refinements; degrade rather than fail.
+  const unavailable: DataSource[] = [];
+
   const transitStops: TransitStop[] =
     transitResult.status === 'fulfilled' ? transitResult.value : [];
+  if (transitResult.status === 'rejected') unavailable.push('transit');
+
+  // fetchStreetContext catches internally and always resolves, so this never
+  // actually rejects — the flag it resolves with is the real signal.
   const street: StreetContext =
     streetResult.status === 'fulfilled' ? streetResult.value : NEUTRAL_STREET;
+  if (!street.available) unavailable.push('street');
 
   const walk = walkScore(amenities);
   const drive = driveScore(amenities);
@@ -66,5 +75,6 @@ export async function buildReport(
     street,
     fifteenMinute: fifteenMinuteBreakdown(amenities),
     dataSparse: amenities.length < SPARSE_THRESHOLD,
+    unavailable,
   };
 }

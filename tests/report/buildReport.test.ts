@@ -38,6 +38,7 @@ describe('buildReport', () => {
     expect(report.scores.overall).toBeGreaterThan(0);
     expect(report.amenities.length).toBeGreaterThan(0);
     expect(report.fifteenMinute.met.length + report.fifteenMinute.missing.length).toBe(9);
+    expect(report.unavailable).toEqual([]);
   });
 
   it('fetches amenities at the 8km drive radius, not 2km', async () => {
@@ -50,12 +51,28 @@ describe('buildReport', () => {
     const report = await buildReport('x', DC);
     expect(report.scores.transit).toBe(0);
     expect(report.scores.walk).toBeGreaterThan(0);
+    expect(report.unavailable).toContain('transit');
+  });
+
+  it('distinguishes a failed transit lookup from a genuine absence of transit', async () => {
+    // Both yield transit: 0. Only the failure is a claim we cannot make, so
+    // only the failure may be reported as unavailable.
+    vi.mocked(overpass.fetchTransitStops).mockResolvedValue([]);
+    const genuinelyEmpty = await buildReport('x', DC);
+    expect(genuinelyEmpty.scores.transit).toBe(0);
+    expect(genuinelyEmpty.unavailable).not.toContain('transit');
+
+    vi.mocked(overpass.fetchTransitStops).mockRejectedValue(new Error('down'));
+    const failed = await buildReport('x', DC);
+    expect(failed.scores.transit).toBe(0);
+    expect(failed.unavailable).toContain('transit');
   });
 
   it('still produces a report when street context fails', async () => {
     vi.mocked(overpass.fetchStreetContext).mockRejectedValue(new Error('down'));
     const report = await buildReport('x', DC);
     expect(report.street.available).toBe(false);
+    expect(report.unavailable).toContain('street');
     expect(report.scores.walk).toBeGreaterThan(0);
   });
 
