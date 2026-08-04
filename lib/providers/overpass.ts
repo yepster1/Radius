@@ -1,5 +1,6 @@
 import { haversineMetres } from '@/lib/geo/distance';
 import { CATEGORIES } from '@/lib/scoring/categories';
+import { countJunctions, type HighwayWay } from '@/lib/scoring/junctions';
 import type {
   Amenity, CategoryId, Coordinates, StreetContext, TransitStop,
 } from '@/lib/report/types';
@@ -17,6 +18,8 @@ export type OverpassElement = {
   lon?: number;
   center?: { lat: number; lon: number };
   tags?: Record<string, string>;
+  /** Present on `out skel` way elements — the ordered node ids making up the way. */
+  nodes?: number[];
 };
 
 /** Try each mirror in turn; only throw when every endpoint fails. */

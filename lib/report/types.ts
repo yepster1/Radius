@@ -34,6 +34,8 @@ export type TransitStop = {
 export type StreetContext = {
   intersectionsWithin1km: number;
   buildingsWithin500m: number;
+  /** False when the lookup failed and the numbers are placeholders. */
+  available: boolean;
 };
 
 export type UrbanBand = 'Rural' | 'Suburban' | 'Urban' | 'Dense Urban';

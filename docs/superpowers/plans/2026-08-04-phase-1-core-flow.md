@@ -41,6 +41,7 @@
 | `lib/geo/slug.ts` | `buildSlug`, `parseSlug` | 2 |
 | `lib/report/types.ts` | `Coordinates`, `Amenity`, `Scores`, `Report`, `AddressSuggestion` | 3 |
 | `lib/scoring/math.ts` | `clamp`, `decay`, `norm` | 3 |
+| `lib/scoring/junctions.ts` | `countJunctions` — true degree-2+ node count | 4 |
 | `lib/scoring/categories.ts` | The 9 categories, their OSM tags and weights | 3 |
 | `lib/providers/overpass.ts` | `fetchAmenities`, `fetchStreetContext` — I/O only | 4 |
 | `tests/fixtures/*.json` | Four recorded Overpass responses | 4 |
@@ -896,6 +897,8 @@ export type TransitStop = {
 export type StreetContext = {
   intersectionsWithin1km: number;
   buildingsWithin500m: number;
+  /** False when the lookup failed and the numbers above are placeholders. */
+  available: boolean;
 };
 
 export type UrbanBand = 'Rural' | 'Suburban' | 'Urban' | 'Dense Urban';
@@ -1930,16 +1933,20 @@ export function urbanSuburbanIndex(
 ): { index: number; band: UrbanBand } {
   const nearby = amenities.filter((a) => a.distanceM <= 1000).length;
 
-  const index = clamp(
-    Math.round(
-      100 *
-        (0.45 * norm(nearby, AMENITY_CAP) +
-          0.3 * norm(street.intersectionsWithin1km, INTERSECTION_CAP) +
-          0.25 * norm(street.buildingsWithin500m, BUILDING_CAP)),
-    ),
-    0,
-    100,
-  );
+  const terms = [{ weight: 0.45, value: norm(nearby, AMENITY_CAP) }];
+
+  // When the street lookup failed its numbers are placeholders, not data.
+  // Renormalising over the signals we actually have stops a transient
+  // Overpass failure from silently reporting a dense city as suburban —
+  // measured at a 37-point, two-band swing before this guard existed.
+  if (street.available) {
+    terms.push({ weight: 0.3, value: norm(street.intersectionsWithin1km, INTERSECTION_CAP) });
+    terms.push({ weight: 0.25, value: norm(street.buildingsWithin500m, BUILDING_CAP) });
+  }
+
+  const totalWeight = terms.reduce((sum, t) => sum + t.weight, 0);
+  const weighted = terms.reduce((sum, t) => sum + t.weight * t.value, 0);
+  const index = clamp(Math.round(100 * (weighted / totalWeight)), 0, 100);
 
   return { index, band: bandFor(index) };
 }
@@ -2746,6 +2753,7 @@ const SPARSE_THRESHOLD = 5;
 const NEUTRAL_STREET: StreetContext = {
   intersectionsWithin1km: 30,
   buildingsWithin500m: 0,
+  available: false,
 };
 
 export async function buildReport(
