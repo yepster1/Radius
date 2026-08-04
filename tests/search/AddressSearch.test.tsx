@@ -71,6 +71,22 @@ describe('AddressSearch', () => {
     expect(push.mock.calls[0][0]).toContain('1600-pennsylvania-ave-se');
   });
 
+  it('does not re-query after a selection', async () => {
+    const user = userEvent.setup();
+    render(<AddressSearch />);
+    await user.type(screen.getByRole('combobox'), '1600 Penn');
+    await user.click(await screen.findByText('1600 Pennsylvania Avenue NW'));
+    await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
+
+    const suggestCalls = () =>
+      vi.mocked(fetch).mock.calls.filter(([u]) => String(u).includes('q=')).length;
+    const before = suggestCalls();
+    // Longer than the 250 ms debounce: a stale re-query would land in this window.
+    await new Promise((r) => setTimeout(r, 500));
+    expect(suggestCalls()).toBe(before);
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
   it('closes the list on Escape', async () => {
     const user = userEvent.setup();
     render(<AddressSearch />);

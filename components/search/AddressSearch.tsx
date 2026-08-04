@@ -16,10 +16,24 @@ export function AddressSearch() {
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
 
-  // One session token per widget instance — Mapbox bills per session, not per keystroke.
-  const session = useRef(crypto.randomUUID());
+  // One session token per widget instance — Mapbox bills per session, not per
+  // keystroke. Lazily initialised: `useRef(crypto.randomUUID())` would call it
+  // on every render and discard the result, and it throws outside a secure context.
+  const session = useRef<string | null>(null);
+  if (session.current === null) session.current = crypto.randomUUID();
+
+  // Set when `select` rewrites the query, so the debounce effect skips the run
+  // that change triggers. Without it every selection fires one more billable
+  // autocomplete call and can reopen the list with stale results after the
+  // user has already chosen.
+  const skipNextQuery = useRef(false);
 
   useEffect(() => {
+    if (skipNextQuery.current) {
+      skipNextQuery.current = false;
+      return;
+    }
+
     // The short-query reset lives in onQueryChange (an event handler), not
     // here — calling setState synchronously in an effect body just to derive
     // state trips react-hooks/set-state-in-effect and causes an extra render.
@@ -51,21 +65,26 @@ export function AddressSearch() {
   const select = useCallback(
     async (suggestion: AddressSuggestion) => {
       setOpen(false);
+      skipNextQuery.current = true;
       setQuery(suggestion.primary);
 
-      const res = await fetch(
-        `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
-      );
-      if (!res.ok) return;
+      try {
+        const res = await fetch(
+          `/api/autocomplete?id=${encodeURIComponent(suggestion.mapboxId)}&session=${session.current}`,
+        );
+        if (!res.ok) return;
 
-      const { lat, lon } = (await res.json()) as { address: string; lat: number; lon: number };
+        const { lat, lon } = (await res.json()) as { lat: number; lon: number };
 
-      // The slug's readable prefix is decorative (see lib/geo/slug.ts) — the
-      // geohash suffix is the payload. Build the text from the suggestion the
-      // user actually picked, since that's what's already on screen; only
-      // the coordinates need to come from the retrieve call.
-      const address = [suggestion.primary, suggestion.secondary].filter(Boolean).join(', ');
-      router.push(`/a/${buildSlug(address, lat, lon)}`);
+        // The slug's readable prefix is decorative (see lib/geo/slug.ts) — the
+        // geohash suffix is the payload. Build the text from the suggestion the
+        // user actually picked, since that's what's already on screen; only
+        // the coordinates need to come from the retrieve call.
+        const address = [suggestion.primary, suggestion.secondary].filter(Boolean).join(', ');
+        router.push(`/a/${buildSlug(address, lat, lon)}`);
+      } catch {
+        // Network failure or malformed JSON: stay put rather than reject unhandled.
+      }
     },
     [router],
   );
