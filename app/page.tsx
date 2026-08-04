@@ -1,4 +1,5 @@
 import { AddressSearch } from '@/components/search/AddressSearch';
+import { RecentSearches } from '@/components/search/RecentSearches';
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
           Walkability, transit, nearby businesses and renter fit — for any US address, in one page.
         </p>
         <AddressSearch />
+        <RecentSearches />
       </section>
     </main>
   );

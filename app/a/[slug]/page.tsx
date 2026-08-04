@@ -8,6 +8,8 @@ import { ScoreTiles } from '@/components/report/ScoreTiles';
 import { NearbyList } from '@/components/report/NearbyList';
 import { UrbanSuburbanBar } from '@/components/report/UrbanSuburbanBar';
 import { FifteenMinute } from '@/components/report/FifteenMinute';
+import { ReportMap } from '@/components/report/ReportMap';
+import { RecordVisit } from '@/components/report/RecordVisit';
 
 /**
  * Last-resort label if reverse geocoding is unavailable. The slug's readable
@@ -45,8 +47,10 @@ export default async function ReportPage({
 
       <div className="mx-auto grid max-w-6xl gap-4 p-6">
         <ReportHeader report={report} />
+        <RecordVisit address={report.address} slug={slug} />
         <ScoreTiles scores={report.scores} />
         <div className="grid gap-4 md:grid-cols-2">
+          <ReportMap report={report} />
           <NearbyList amenities={report.amenities} />
           <div className="grid content-start gap-4">
             <UrbanSuburbanBar value={report.scores.urbanSuburban} />
