@@ -50,7 +50,7 @@
 | `lib/scoring/errand.ts` | `errandScore`, `fifteenMinuteBreakdown` | 6 |
 | `lib/scoring/urbanSuburban.ts` | `urbanSuburbanIndex` + band label | 6 |
 | `lib/scoring/overall.ts` | `overallScore` | 6 |
-| `lib/providers/mapbox.ts` | `suggestAddresses`, `retrieveAddress` — I/O only | 7 |
+| `lib/providers/mapbox.ts` | `suggestAddresses`, `retrieveAddress`, `reverseGeocode` — I/O only | 7 |
 | `app/api/autocomplete/route.ts` | Proxy that keeps the secret token server-side | 7 |
 | `components/search/AddressSearch.tsx` | `'use client'` ARIA combobox | 8 |
 | `lib/report/buildReport.ts` | Orchestrator: parallel fetch, cache, assemble | 9 |
@@ -2032,6 +2032,7 @@ git commit -m "feat: drive, transit, errand, urban-suburban and overall scores"
 - Produces:
   - `suggestAddresses(query: string, sessionToken: string): Promise<AddressSuggestion[]>`
   - `retrieveAddress(mapboxId: string, sessionToken: string): Promise<{ address: string; lat: number; lon: number } | null>`
+  - `reverseGeocode(coords: Coordinates): Promise<string | null>` — canonical address for a decoded slug
   - `parseSuggestResponse(json: unknown): AddressSuggestion[]` — exported for tests
   - `GET /api/autocomplete?q=&session=` → `{ suggestions: AddressSuggestion[] }`
   - `GET /api/autocomplete?id=&session=` → `{ address, lat, lon }`
@@ -2187,6 +2188,77 @@ export async function retrieveAddress(
 ```
 
 Run: `npm test -- mapbox` → PASS (4 tests)
+
+- [ ] **Step 3b: Add reverse geocoding**
+
+A slug's readable portion is decorative and lossy — `washington-dc` cannot tell us the
+address was `Washington, DC`. The report page therefore resolves the canonical address
+from the decoded coordinates rather than trying to un-mangle the slug.
+
+Append this test to `tests/providers/mapbox.test.ts`:
+
+```ts
+import { parseReverseResponse } from '@/lib/providers/mapbox';
+
+describe('parseReverseResponse', () => {
+  it('returns the full formatted address', () => {
+    const json = {
+      features: [{ properties: { full_address: '1600 Pennsylvania Ave NW, Washington, DC 20500' } }],
+    };
+    expect(parseReverseResponse(json)).toBe('1600 Pennsylvania Ave NW, Washington, DC 20500');
+  });
+
+  it('falls back to place_formatted when full_address is absent', () => {
+    const json = { features: [{ properties: { place_formatted: 'Washington, DC' } }] };
+    expect(parseReverseResponse(json)).toBe('Washington, DC');
+  });
+
+  it('returns null for an empty or malformed payload', () => {
+    expect(parseReverseResponse({ features: [] })).toBeNull();
+    expect(parseReverseResponse(null)).toBeNull();
+    expect(parseReverseResponse({})).toBeNull();
+  });
+});
+```
+
+Run `npm test -- mapbox` → FAIL, then append to `lib/providers/mapbox.ts`:
+
+```ts
+import type { Coordinates } from '@/lib/report/types';
+
+/** Pure parser, exported for tests. */
+export function parseReverseResponse(json: unknown): string | null {
+  if (typeof json !== 'object' || json === null) return null;
+  const { features } = json as { features?: unknown };
+  if (!Array.isArray(features) || features.length === 0) return null;
+
+  const props = (features[0] as { properties?: Record<string, unknown> })?.properties;
+  const full = props?.full_address;
+  if (typeof full === 'string' && full.length > 0) return full;
+
+  const place = props?.place_formatted;
+  return typeof place === 'string' && place.length > 0 ? place : null;
+}
+
+/** Canonical address for a coordinate pair. Cached — coordinates do not move. */
+export async function reverseGeocode(coords: Coordinates): Promise<string | null> {
+  const url = new URL('https://api.mapbox.com/search/geocode/v6/reverse');
+  url.searchParams.set('longitude', String(coords.lon));
+  url.searchParams.set('latitude', String(coords.lat));
+  url.searchParams.set('access_token', secretToken());
+  url.searchParams.set('types', 'address');
+
+  try {
+    const res = await fetch(url, { next: { revalidate: 86_400 } });
+    if (!res.ok) return null;
+    return parseReverseResponse(await res.json());
+  } catch {
+    return null;
+  }
+}
+```
+
+Run: `npm test -- mapbox` → PASS (7 tests)
 
 - [ ] **Step 4: Implement the proxy route**
 
@@ -2988,6 +3060,7 @@ Create `app/a/[slug]/page.tsx`:
 ```tsx
 import { notFound } from 'next/navigation';
 import { parseSlug } from '@/lib/geo/slug';
+import { reverseGeocode } from '@/lib/providers/mapbox';
 import { buildReport } from '@/lib/report/buildReport';
 import { ReportHeader } from '@/components/report/ReportHeader';
 import { ScoreTiles } from '@/components/report/ScoreTiles';
@@ -2995,6 +3068,11 @@ import { NearbyList } from '@/components/report/NearbyList';
 import { UrbanSuburbanBar } from '@/components/report/UrbanSuburbanBar';
 import { FifteenMinute } from '@/components/report/FifteenMinute';
 
+/**
+ * Last-resort label if reverse geocoding is unavailable. The slug's readable
+ * portion is lossy — it cannot recover "NW" from "nw" or restore commas — so
+ * this is a fallback, never the primary source.
+ */
 function humanise(slug: string): string {
   return slug
     .split('-')
@@ -3012,7 +3090,9 @@ export default async function ReportPage({
   const coords = parseSlug(slug);
   if (!coords) notFound();
 
-  const report = await buildReport(humanise(slug), coords);
+  // Resolve the canonical address from coordinates. The slug is decorative.
+  const canonical = await reverseGeocode(coords);
+  const report = await buildReport(canonical ?? humanise(slug), coords);
 
   return (
     <main className="min-h-screen">
