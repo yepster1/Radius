@@ -760,7 +760,7 @@ Create `tests/scoring/math.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { clamp, decay, norm } from '@/lib/scoring/math';
+import { clamp, decay, norm, normLog } from '@/lib/scoring/math';
 
 describe('clamp', () => {
   it('passes through a value inside the range', () => {
@@ -801,6 +801,33 @@ describe('decay', () => {
 
   it('never returns a negative value', () => {
     expect(decay(100_000, 2400)).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('normLog', () => {
+  it('is 0 at zero and 1 at the cap', () => {
+    expect(normLog(0, 800)).toBe(0);
+    expect(normLog(800, 800)).toBe(1);
+  });
+
+  it('lifts small counts well above their linear share', () => {
+    // 21 of 800 is 2.6% linearly but ~46% on a log scale — the difference
+    // between labelling a suburb "Rural" and labelling it "Suburban".
+    expect(normLog(21, 800)).toBeGreaterThan(0.4);
+    expect(normLog(21, 800)).toBeLessThan(0.5);
+  });
+
+  it('still separates values above the cap after clamping', () => {
+    expect(normLog(400, 800)).toBeLessThan(normLog(790, 800));
+  });
+
+  it('saturates at 1 rather than exceeding it', () => {
+    expect(normLog(100_000, 800)).toBe(1);
+  });
+
+  it('returns 0 for a non-positive cap or value', () => {
+    expect(normLog(50, 0)).toBe(0);
+    expect(normLog(-5, 800)).toBe(0);
   });
 });
 
@@ -858,6 +885,20 @@ export function decay(distanceM: number, scaleM: number): number {
 export function norm(value: number, cap: number): number {
   if (cap <= 0) return 0;
   return clamp(value / cap, 0, 1);
+}
+
+/**
+ * Log-normalise a count to [0,1]. Use this for heavy-tailed densities where a
+ * linear cap either saturates the top or crushes the middle.
+ *
+ * Amenities within 1 km, measured: rural 0, suburb 21, Brookline 400, DC 793.
+ * Linear against a cap of 150 put both urban points at exactly 1.0 and the
+ * suburb at 0.14 — which rendered a Texas subdivision as "Rural". Log against
+ * 800 gives 0, 0.46, 0.90, 1.0: correct bands across the whole range.
+ */
+export function normLog(value: number, cap: number): number {
+  if (cap <= 0 || value <= 0) return 0;
+  return clamp(Math.log1p(value) / Math.log1p(cap), 0, 1);
 }
 ```
 
@@ -1895,7 +1936,7 @@ Create `tests/scoring/urbanSuburban.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
+import { bandFor, urbanSuburbanIndex } from '@/lib/scoring/urbanSuburban';
 import { parseAmenityElements, type OverpassElement } from '@/lib/providers/overpass';
 import type { Amenity, Coordinates } from '@/lib/report/types';
 import denseUrban from '../fixtures/dense-urban.json';
@@ -1982,6 +2023,11 @@ describe('urbanSuburbanIndex', () => {
     expect(vt).toBeLessThan(plano);
     expect(plano).toBeLessThan(Math.min(dc, brookline));
     expect(vt).toBeLessThan(20);
+
+    // Bands must be right, not merely ordered: a Texas subdivision is not rural.
+    expect(bandFor(plano)).toBe('Suburban');
+    expect(bandFor(dc)).toBe('Dense Urban');
+    expect(bandFor(brookline)).toBe('Dense Urban');
   });
 });
 ```
@@ -1991,17 +2037,17 @@ describe('urbanSuburbanIndex', () => {
 Run: `npm test -- urbanSuburban` → FAIL
 
 ```ts
-import { clamp, norm } from './math';
+import { clamp, norm, normLog } from './math';
 import type { Amenity, StreetContext, UrbanBand } from '@/lib/report/types';
 
-const AMENITY_CAP = 150;
+const AMENITY_CAP = 800;
 // Measured across the four reference points: rural 0, car-dependent 238,
 // dense urban 439, transit suburb 507. A cap of 120 saturated three of the
 // four, collapsing the term to a rural/non-rural switch.
 const INTERSECTION_CAP = 500;
 const BUILDING_CAP = 400;
 
-function bandFor(index: number): UrbanBand {
+export function bandFor(index: number): UrbanBand {
   if (index <= 25) return 'Rural';
   if (index <= 50) return 'Suburban';
   if (index <= 75) return 'Urban';
@@ -2018,7 +2064,7 @@ export function urbanSuburbanIndex(
 ): { index: number; band: UrbanBand } {
   const nearby = amenities.filter((a) => a.distanceM <= 1000).length;
 
-  const terms = [{ weight: 0.45, value: norm(nearby, AMENITY_CAP) }];
+  const terms = [{ weight: 0.45, value: normLog(nearby, AMENITY_CAP) }];
 
   // When the street lookup failed its numbers are placeholders, not data.
   // Renormalising over the signals we actually have stops a transient
