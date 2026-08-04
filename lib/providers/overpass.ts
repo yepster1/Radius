@@ -1,6 +1,6 @@
 import { haversineMetres } from '@/lib/geo/distance';
 import { CATEGORIES } from '@/lib/scoring/categories';
-import { countJunctions, type HighwayWay } from '@/lib/scoring/junctions';
+import { countJunctions, type HighwayWay } from '@/lib/geo/junctions';
 import type {
   Amenity, CategoryId, Coordinates, StreetContext, TransitStop,
 } from '@/lib/report/types';

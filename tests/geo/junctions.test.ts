@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import streetDenseUrban from '../fixtures/street-dense-urban.json';
-import { countJunctions, type HighwayWay } from '@/lib/scoring/junctions';
+import { countJunctions, type HighwayWay } from '@/lib/geo/junctions';
 
 describe('countJunctions', () => {
   it('returns 0 for an empty input', () => {
