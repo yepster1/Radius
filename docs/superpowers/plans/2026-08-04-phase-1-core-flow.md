@@ -3707,6 +3707,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Report } from '@/lib/report/types';
 
 const WALK_RADIUS_M = 800;
+/**
+ * Marker budget. Every marker is a DOM node plus a Mapbox Marker and Popup, and
+ * a dense address puts hundreds inside the walk ring — downtown DC measured 537.
+ * The nearest few dozen convey the same picture at a fraction of the cost.
+ */
+const MAX_MARKERS = 60;
 
 /** GeoJSON circle approximating a walking radius. */
 function circle(lat: number, lon: number, radiusM: number) {
@@ -3732,7 +3738,15 @@ export function ReportMap({ report }: { report: Report }) {
 
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN;
-    if (!container.current || !token) return;
+    if (!container.current) return;
+    if (!token) {
+      // A blank grey rectangle reads as a broken map. Say what is actually wrong.
+      container.current.textContent =
+        'Map unavailable — NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN is not configured.';
+      container.current.className +=
+        ' flex items-center justify-center p-6 text-center font-mono text-xs text-gray-2';
+      return;
+    }
 
     mapboxgl.accessToken = token;
     const { lat, lon } = report.coordinates;
@@ -3759,7 +3773,11 @@ export function ReportMap({ report }: { report: Report }) {
         paint: { 'line-color': '#ff4f00', 'line-width': 1.5, 'line-dasharray': [3, 2] },
       });
 
-      for (const amenity of report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M)) {
+      const walkable = report.amenities
+        .filter((a) => a.distanceM <= WALK_RADIUS_M)
+        .slice(0, MAX_MARKERS);
+
+      for (const amenity of walkable) {
         const dot = document.createElement('div');
         dot.style.cssText =
           'width:8px;height:8px;border-radius:50%;background:#4b5563;border:1.5px solid #fff';
@@ -3767,6 +3785,17 @@ export function ReportMap({ report }: { report: Report }) {
           .setLngLat([amenity.lon, amenity.lat])
           .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(amenity.name))
           .addTo(map);
+      }
+
+      if (report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M).length > MAX_MARKERS) {
+        map.addControl(
+          new mapboxgl.AttributionControl({
+            customAttribution: `Showing the ${MAX_MARKERS} nearest of ${
+              report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M).length
+            } amenities`,
+          }),
+          'bottom-left',
+        );
       }
 
       const pin = document.createElement('div');
