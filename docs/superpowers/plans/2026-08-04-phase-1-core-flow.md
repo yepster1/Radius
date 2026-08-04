@@ -178,6 +178,12 @@ h1, h2, h3, h4 {
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
+
+/* Every mono surface — buttons, labels, score captions — carries this
+   tracking. Setting it on the utility means components never restate it. */
+.font-mono {
+  letter-spacing: 0.015em;
+}
 ```
 
 - [ ] **Step 7: Wire the fonts in the root layout**
@@ -237,7 +243,13 @@ Append to `eslint.config.mjs` (inside the exported array):
       'error',
       {
         patterns: [
-          { group: ['@/lib/providers/*'], message: 'lib/scoring must not depend on I/O.' },
+          {
+            // Both forms must be blocked. An alias-only pattern is trivially
+            // bypassed by `import x from '../providers/overpass'`, which would
+            // silently defeat the whole purity guarantee.
+            group: ['@/lib/providers/**', '**/providers/**'],
+            message: 'lib/scoring must not depend on I/O.',
+          },
         ],
       },
     ],
