@@ -3759,11 +3759,14 @@ Create `tests/e2e/search.spec.ts`:
 ```ts
 import { expect, test } from '@playwright/test';
 
+// Queries must disambiguate the way a real user's would. "1600 Pennsylvania
+// Ave" without the "NW" ranks Lorain, Ohio first — correct geocoder behaviour
+// for an ambiguous string, but it would send these tests to the wrong city.
 test('search an address and read its report', async ({ page }) => {
   await page.goto('/');
 
   const input = page.getByRole('combobox', { name: /address/i });
-  await input.fill('1600 Pennsylvania Ave');
+  await input.fill('1600 Pennsylvania Ave NW');
 
   const option = page.getByRole('option').first();
   await expect(option).toBeVisible();
@@ -3802,7 +3805,7 @@ import { expect, test } from '@playwright/test';
  */
 test('a shared report renders for a cold visitor', async ({ page, browser }) => {
   await page.goto('/');
-  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave');
+  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave NW');
   await page.getByRole('option').first().click();
   await expect(page).toHaveURL(/\/a\/.+/);
 
@@ -3823,7 +3826,7 @@ test('a shared report renders for a cold visitor', async ({ page, browser }) => 
 
 test('visited addresses appear in recent searches', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave');
+  await page.getByRole('combobox', { name: /address/i }).fill('1600 Pennsylvania Ave NW');
   await page.getByRole('option').first().click();
   await expect(page).toHaveURL(/\/a\/.+/);
 
