@@ -835,7 +835,14 @@ export function clamp(value: number, min: number, max: number): number {
 /**
  * Distance decay: 1 at the doorstep, falling away with distance.
  *
- * exp(-(d / scale)^1.5). An earlier draft used exp(-5 * (d/scale)^5), which is
+ * exp(-(d / scale)^1.5).
+ *
+ * `scale` is an e-folding distance, NOT a cutoff: decay(scale, scale) = e^-1 =
+ * 0.368, so an amenity sitting exactly at the scale still counts for a third.
+ * The rule of thumb used throughout is scale = radius / 2.5, which puts the
+ * contribution at the radius edge near 0.02 for every score.
+ *
+ * An earlier draft used exp(-5 * (d/scale)^5), which is
  * so steep it behaves as a step function — measured at scale 1300 it returns
  * 0.96 at 500 m but 0.007 at 1300 m, so every amenity inside the knee counted
  * the same and all four reference locations scored within 1.2 points of each
@@ -1092,10 +1099,12 @@ Create `tests/providers/overpass.test.ts`:
 ```ts
 import { describe, expect, it } from 'vitest';
 import denseUrban from '../fixtures/dense-urban.json';
+import carDependent from '../fixtures/car-dependent.json';
 import rural from '../fixtures/rural.json';
 import { parseAmenityElements } from '@/lib/providers/overpass';
 
 const DC = { lat: 38.8977, lon: -77.0365 };
+const TX = { lat: 33.081, lon: -96.718 }; // matches car-dependent.json's origin
 const RURAL = { lat: 44.4759, lon: -73.2121 };
 
 describe('parseAmenityElements', () => {
@@ -1159,7 +1168,7 @@ import { CATEGORIES } from '../lib/scoring/categories';
 const REFERENCES = [
   { name: 'dense-urban', lat: 38.8977, lon: -77.0365 },
   { name: 'suburban-transit', lat: 42.3736, lon: -71.1097 },
-  { name: 'car-dependent', lat: 33.0198, lon: -96.6989 },
+  { name: 'car-dependent', lat: 33.0810, lon: -96.7180 }, // residential mid-block, not a retail node
   { name: 'rural', lat: 44.4759, lon: -73.2121 },
 ];
 
@@ -1415,6 +1424,7 @@ Create `tests/scoring/walk.test.ts`:
 ```ts
 import { describe, expect, it } from 'vitest';
 import { walkScore } from '@/lib/scoring/walk';
+import { CATEGORIES } from '@/lib/scoring/categories';
 import { parseAmenityElements } from '@/lib/providers/overpass';
 import type { Amenity } from '@/lib/report/types';
 import denseUrban from '../fixtures/dense-urban.json';
@@ -1453,6 +1463,15 @@ describe('walkScore', () => {
     expect(urban - country).toBeGreaterThan(50);
   });
 
+  it('scores a car-dependent suburb well below a dense city', () => {
+    // Measured: DC 78, Plano 30. The Plano fixture is a residential mid-block
+    // point with no cafe or retail within 2 km — an earlier fixture sat in a
+    // strip-mall car park and scored 78, which is why this assertion once failed.
+    const urban = walkScore(parseAmenityElements(denseUrban.elements, DC));
+    const suburb = walkScore(parseAmenityElements(carDependent.elements, TX));
+    expect(suburb).toBeLessThan(urban - 30);
+  });
+
   it('scores a rural address low', () => {
     expect(walkScore(parseAmenityElements(rural.elements, VT))).toBeLessThan(15);
   });
@@ -1484,10 +1503,12 @@ describe('walkScore', () => {
   });
 
   it('ignores amenities beyond the 2km radius', () => {
-    const inside = [amenity({ distanceM: 1900 })];
-    const outside = [amenity({ distanceM: 2100 })];
-    expect(walkScore(outside)).toBe(0);
-    expect(walkScore(inside)).toBeGreaterThan(0);
+    // One amenity at 1900 m contributes ~0.3 points and rounds to 0 either way,
+    // so the boundary only shows with a full complement of categories.
+    const atDistance = (distanceM: number) =>
+      CATEGORIES.map((c, i) => amenity({ id: i, category: c.id, distanceM }));
+    expect(walkScore(atDistance(2100))).toBe(0);
+    expect(walkScore(atDistance(1900))).toBeGreaterThan(0);
   });
 });
 ```
@@ -1598,6 +1619,7 @@ Create `tests/scoring/drive.test.ts`:
 import { describe, expect, it } from 'vitest';
 import { driveScore } from '@/lib/scoring/drive';
 import { walkScore } from '@/lib/scoring/walk';
+import { CATEGORIES } from '@/lib/scoring/categories';
 import type { Amenity } from '@/lib/report/types';
 
 const amenity = (over: Partial<Amenity>): Amenity => ({
@@ -1629,13 +1651,15 @@ describe('driveScore', () => {
     expect(grocery).toBeGreaterThan(cafe);
   });
 
-  it('stays within 0-100', () => {
-    const many = Array.from({ length: 500 }, (_, i) =>
-      amenity({ id: i, category: 'retail', distanceM: 500 }),
+  it('returns exactly 100 only when every category is at the doorstep', () => {
+    // Stressing one category cannot reach the ceiling — the top-3 slice and
+    // that category's share of total weight both bound it. Use all nine.
+    const everything = CATEGORIES.flatMap((c, ci) =>
+      [0, 1, 2].map((k) => amenity({ id: ci * 3 + k, category: c.id, distanceM: 0 })),
     );
-    const score = driveScore(many);
-    expect(score).toBeGreaterThanOrEqual(0);
-    expect(score).toBeLessThanOrEqual(100);
+    expect(driveScore(everything)).toBe(100);
+    expect(driveScore([amenity({ category: 'retail', distanceM: 500 })]))
+      .toBeLessThan(20);
   });
 });
 ```
@@ -1650,8 +1674,9 @@ import { clamp, decay } from './math';
 import type { Amenity } from '@/lib/report/types';
 
 const RADIUS_M = 8000;
-const DECAY_SCALE_M = 9600;
+const DECAY_SCALE_M = 3200; // radius / 2.5, matching Walk Score's falloff
 const POSITION_WEIGHTS = [1.0, 0.5, 0.25];
+const MAX_CATEGORY_SCORE = POSITION_WEIGHTS.reduce((sum, w) => sum + w, 0);
 
 /**
  * Drive Score: the Walk Score algorithm at a wider radius over a
@@ -1673,7 +1698,7 @@ export function driveScore(amenities: Amenity[]): number {
       0,
     );
 
-    weighted += categoryScore * category.driveWeight;
+    weighted += (categoryScore / MAX_CATEGORY_SCORE) * category.driveWeight;
     totalWeight += category.driveWeight;
   }
 
@@ -1739,7 +1764,7 @@ import { clamp, decay } from './math';
 import type { TransitStop } from '@/lib/report/types';
 
 const RADIUS_M = 1500;
-const DECAY_SCALE_M = 1800;
+const DECAY_SCALE_M = 600; // radius / 2.5, matching Walk Score's falloff
 
 /**
  * K is a calibration constant, not a derived value. It is fixed against the

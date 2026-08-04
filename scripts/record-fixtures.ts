@@ -54,7 +54,7 @@ async function main() {
   }
 
   // Real highway-way geometry for the dense-urban point, so countJunctions()
-  // (lib/scoring/junctions.ts) can be tested against real OSM data instead
+  // (lib/geo/junctions.ts) can be tested against real OSM data instead
   // of hand-built fixtures alone. Mirrors fetchStreetContext's highway query.
   const denseUrban = REFERENCES.find((r) => r.name === 'dense-urban')!;
   const streetQuery = `[out:json][timeout:30];
