@@ -3282,7 +3282,12 @@ export function FifteenMinute({ data }: { data: Report['fifteenMinute'] }) {
 Create `components/report/ReportHeader.tsx`:
 
 ```tsx
-import type { Report } from '@/lib/report/types';
+import type { DataSource, Report } from '@/lib/report/types';
+
+const UNAVAILABLE_LABEL: Record<DataSource, string> = {
+  transit: 'Transit data could not be loaded for this address.',
+  street: 'Street-network data could not be loaded for this address.',
+};
 
 export function ReportHeader({ report }: { report: Report }) {
   return (
@@ -3317,6 +3322,19 @@ export function ReportHeader({ report }: { report: Report }) {
         >
           OpenStreetMap has little data for this area, so these scores are based on a thin
           sample. They reflect mapped coverage, not necessarily what is actually there.
+        </p>
+      )}
+
+      {report.unavailable.length > 0 && (
+        <p
+          role="status"
+          className="m-0 rounded-btn border-l-[3px] border-gray-3 bg-gray-5 px-4 py-3 text-sm text-gray-2"
+        >
+          {UNAVAILABLE_LABEL[report.unavailable[0]]}
+          {report.unavailable.length > 1 &&
+            ` ${UNAVAILABLE_LABEL[report.unavailable[1]]}`}{' '}
+          Those figures show 0 because we could not retrieve the data, not because the
+          answer is 0.
         </p>
       )}
     </>
