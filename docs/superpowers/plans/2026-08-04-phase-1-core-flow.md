@@ -1793,6 +1793,23 @@ describe('transitScore', () => {
     );
     expect(transitScore(many)).toBe(100);
   });
+
+  it('pins the calibration anchors so K cannot drift unnoticed', () => {
+    // Ordering tests cannot protect K — any positive scalar preserves ordering,
+    // and the saturation test clamps to 100 for any K above ~0.11. Without
+    // these exact values K could be changed tenfold and every other test would
+    // still pass, while the headline Overall Score shifted by 25%.
+    expect(transitScore([stop({ mode: 'bus', routeCount: 1, distanceM: 300 })])).toBe(3);
+    expect(transitScore([stop({ mode: 'rail', routeCount: 1, distanceM: 300 })])).toBe(8);
+    expect(transitScore([stop({ mode: 'rail', routeCount: 3, distanceM: 400 })])).toBe(21);
+    expect(
+      transitScore(
+        Array.from({ length: 6 }, (_, i) =>
+          stop({ id: i, mode: 'bus', routeCount: 2, distanceM: 300 }),
+        ),
+      ),
+    ).toBe(34);
+  });
 });
 ```
 
@@ -1808,9 +1825,19 @@ const RADIUS_M = 1500;
 const DECAY_SCALE_M = 600; // radius / 2.5, matching Walk Score's falloff
 
 /**
- * K is a calibration constant, not a derived value. It is fixed against the
- * four reference fixtures so that a transit-saturated core lands near 100 and
- * a single bus stop lands near 15. Changing it must show up as a test diff.
+ * K is a tuning constant, not a derived value — there is no transit fixture to
+ * calibrate it against, so it is set by judgement about what the resulting
+ * spread should look like rather than fitted to data.
+ *
+ * At K = 4 the anchors are: one bus stop with one route at 300 m -> 3; one rail
+ * stop at 300 m -> 8; a rail stop at 400 m with three routes -> 21; six bus
+ * stops at 300 m with two routes each -> 34; a stop-dense core saturates at 100.
+ *
+ * `transitScore` feeds the headline Overall Score at weight 0.25, so those
+ * anchors are pinned by exact-value tests. Ordering tests alone cannot protect
+ * this constant: any positive scalar preserves ordering, and the saturation
+ * test still clamps to 100 for any K above ~0.11 — K could be changed tenfold
+ * without a single ordering test noticing.
  */
 const K = 4;
 
