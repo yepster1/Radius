@@ -8,7 +8,7 @@ import { CATEGORIES } from '../lib/scoring/categories';
 const REFERENCES = [
   { name: 'dense-urban', lat: 38.8977, lon: -77.0365 },
   { name: 'suburban-transit', lat: 42.3736, lon: -71.1097 },
-  { name: 'car-dependent', lat: 33.0198, lon: -96.6989 },
+  { name: 'car-dependent', lat: 33.0810, lon: -96.7180 },
   // NOTE: 44.4759, -73.2121 (as given in the task brief) is actually downtown
   // Burlington's Main Street, not rural — confirmed via Nominatim reverse
   // geocoding. Using a genuinely rural point ~20mi south (Ferrisburgh, VT)

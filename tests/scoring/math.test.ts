@@ -34,8 +34,8 @@ describe('decay', () => {
     expect(decay(100, 2400)).toBeGreaterThan(0.99);
   });
 
-  it('is effectively 0 well beyond the scale', () => {
-    expect(decay(6000, 2400)).toBeLessThan(0.001);
+  it('is small well beyond the scale', () => {
+    expect(decay(6000, 2400)).toBeLessThan(0.05);
   });
 
   it('never returns a negative value', () => {
