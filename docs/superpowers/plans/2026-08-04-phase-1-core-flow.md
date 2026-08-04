@@ -795,8 +795,8 @@ describe('decay', () => {
     expect(decay(100, 2400)).toBeGreaterThan(0.99);
   });
 
-  it('is effectively 0 well beyond the scale', () => {
-    expect(decay(6000, 2400)).toBeLessThan(0.001);
+  it('is small well beyond the scale', () => {
+    expect(decay(6000, 2400)).toBeLessThan(0.05);
   });
 
   it('never returns a negative value', () => {
@@ -833,13 +833,18 @@ export function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Distance decay: 1 at the doorstep, falling away sharply past the scale.
- * exp(-5 * (d / scale)^5) — the curve Walk Score popularised.
+ * Distance decay: 1 at the doorstep, falling away with distance.
+ *
+ * exp(-(d / scale)^1.5). An earlier draft used exp(-5 * (d/scale)^5), which is
+ * so steep it behaves as a step function — measured at scale 1300 it returns
+ * 0.96 at 500 m but 0.007 at 1300 m, so every amenity inside the knee counted
+ * the same and all four reference locations scored within 1.2 points of each
+ * other. The gentler exponent discriminates across real walking distances.
  */
 export function decay(distanceM: number, scaleM: number): number {
   if (distanceM <= 0) return 1;
   if (scaleM <= 0) return 0;
-  return Math.exp(-5 * Math.pow(distanceM / scaleM, 5));
+  return Math.exp(-Math.pow(distanceM / scaleM, 1.5));
 }
 
 /** Normalise a count to [0,1] against a saturation cap. */
@@ -1413,12 +1418,10 @@ import { walkScore } from '@/lib/scoring/walk';
 import { parseAmenityElements } from '@/lib/providers/overpass';
 import type { Amenity } from '@/lib/report/types';
 import denseUrban from '../fixtures/dense-urban.json';
-import carDependent from '../fixtures/car-dependent.json';
 import rural from '../fixtures/rural.json';
 
 const DC = { lat: 38.8977, lon: -77.0365 };
-const TX = { lat: 33.0198, lon: -96.6989 };
-const VT = { lat: 44.4759, lon: -73.2121 };
+const VT = { lat: 44.2159, lon: -73.274 }; // matches rural.json's recording origin
 
 const amenity = (over: Partial<Amenity>): Amenity => ({
   id: 1, name: 'Test', category: 'grocery', lat: 0, lon: 0, distanceM: 100, ...over,
@@ -1431,18 +1434,27 @@ describe('walkScore', () => {
 
   it('scores a dense urban address highly', () => {
     const score = walkScore(parseAmenityElements(denseUrban.elements, DC));
-    expect(score).toBeGreaterThan(75);
+    expect(score).toBeGreaterThan(65);
     expect(score).toBeLessThanOrEqual(100);
   });
 
-  it('scores a car-dependent suburb well below a dense city', () => {
+  it('does not saturate the 0-100 ceiling for a dense address', () => {
+    // Regression test. An earlier formula scaled a value that ranged to 1.75 by
+    // 100, so DC, Brookline and Plano all pinned to exactly 100 — a 0-point
+    // spread across three very different places. The score must discriminate.
     const urban = walkScore(parseAmenityElements(denseUrban.elements, DC));
-    const suburb = walkScore(parseAmenityElements(carDependent.elements, TX));
-    expect(suburb).toBeLessThan(urban);
+    expect(urban).toBeGreaterThan(65);
+    expect(urban).toBeLessThan(100);
+  });
+
+  it('separates a dense city from a rural address by a wide margin', () => {
+    const urban = walkScore(parseAmenityElements(denseUrban.elements, DC));
+    const country = walkScore(parseAmenityElements(rural.elements, VT));
+    expect(urban - country).toBeGreaterThan(50);
   });
 
   it('scores a rural address low', () => {
-    expect(walkScore(parseAmenityElements(rural.elements, VT))).toBeLessThan(35);
+    expect(walkScore(parseAmenityElements(rural.elements, VT))).toBeLessThan(15);
   });
 
   it('never exceeds 100 even with hundreds of adjacent amenities', () => {
@@ -1493,8 +1505,17 @@ import { clamp, decay } from './math';
 import type { Amenity } from '@/lib/report/types';
 
 const RADIUS_M = 2000;
-const DECAY_SCALE_M = 2400;
+const DECAY_SCALE_M = 800;
 const POSITION_WEIGHTS = [1.0, 0.5, 0.25];
+
+/**
+ * A category's score maxes out when all three nearest amenities sit at the
+ * doorstep, i.e. the position weights summed. Dividing by it puts every
+ * category in [0,1] so the weighted mean is also in [0,1] — without this the
+ * raw value ranges to 1.75 and, scaled by 100, saturates the 0-100 clamp for
+ * any address with amenities in most categories.
+ */
+const MAX_CATEGORY_SCORE = POSITION_WEIGHTS.reduce((sum, w) => sum + w, 0);
 
 /**
  * Walk Score for a point, given amenities already fetched for it.
@@ -1524,7 +1545,7 @@ export function walkScore(amenities: Amenity[]): number {
       0,
     );
 
-    weighted += categoryScore * category.weight;
+    weighted += (categoryScore / MAX_CATEGORY_SCORE) * category.weight;
     totalWeight += category.weight;
   }
 
