@@ -30,6 +30,10 @@ async function runQuery(query: string): Promise<OverpassElement[]> {
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
+        // Overpass returns 406 to requests with no User-Agent, and Node's fetch
+        // sends none by default — without this every query fails in production.
+        // The fixture-recording script hit the same wall in Task 4.
+        headers: { 'User-Agent': 'RadiusAddressInsights/0.1 (+https://radius-address-insights.vercel.app)' },
         body: new URLSearchParams({ data: query }),
         next: { revalidate: 86_400 }, // 24h — shops do not move
       });
