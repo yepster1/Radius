@@ -25,17 +25,31 @@ Nothing here is an API handing back a number. Every score is computed from raw
 OpenStreetMap geometry with a published formula.
 
 **Walk Score** — for each of nine amenity categories, take the three nearest within
-2 km, weight each by `exp(-5 · (d/2400)^5)` distance decay and by position, then
-weight the categories against each other. Apply an intersection-density penalty so a
-connected grid beats a cul-de-sac with the same raw amenity count.
+2 km and weight each by `exp(-(d/800)^1.5)` distance decay and by position, then
+weight the categories against each other. Each category's score is divided by its
+own maximum before weighting, so the result genuinely occupies the 0–100 range.
 
-**Drive Score** — the same algorithm at 8 km with car-relevant category weights and
-no intersection penalty.
+**Drive Score** — the same algorithm at 8 km, with car-relevant category weights and
+a decay scale of 3200. Every score sets `scale = radius / 2.5`, which puts an
+amenity sitting at the radius edge at roughly 0.02 of full value.
 
 **Transit Score** — stops within 1.5 km, weighted by mode (rail beats bus) and route count.
 
 **Urban ↔ Suburban Index** — 45% amenity density, 30% intersection density,
-25% building footprint, mapped to a 0–100 score and one of four bands.
+25% building footprint, mapped to a 0–100 score and one of four bands. Amenity
+density is normalised logarithmically rather than linearly, because it is
+heavy-tailed: counts within 1 km across the four reference locations were 0, 21,
+400 and 793. When the street-network lookup fails, the index renormalises over the
+signals it actually has rather than reading missing data as zero.
+
+**What was measured and removed.** Walk Score originally applied an
+intersection-density penalty, so that a connected grid would beat a cul-de-sac with
+the same amenity count. Measuring junctions per km² across the four reference
+locations gave rural 0, car-dependent suburb 238, dense urban 439, transit suburb
+507 — no threshold separates walkable from car-dependent, and the leafy suburb
+outranks downtown DC. OpenStreetMap splits a way whenever a tag changes, so the
+proxy measures OSM bookkeeping as much as street topology. The penalty was removed
+rather than shipped as a term that does no work.
 
 ## Architecture
 
@@ -72,21 +86,26 @@ community API with no uptime guarantee.
 
 ### What testing against real places caught
 
-Running the app against real addresses, rather than trusting the unit suite alone,
-surfaced three bugs the fixtures couldn't:
+Scoring formulas look plausible on synthetic inputs and fail on real ones. Testing
+against four recorded real locations caught two bugs that hand-written test data
+would have sailed past:
 
 - **Walk Score always showed 100.** Washington DC, Brookline MA and Plano TX all
   scored the maximum — a normalisation bug where a value that could range up to
-  1.75 was scaled as though its range topped out at 1.
+  1.75 was scaled as though its range topped out at 1. Synthetic amenities never
+  produced enough categories at once to reveal it.
 - **A Plano, TX subdivision was labelled "Rural."** The Urban ↔ Suburban Index
-  normalised intersection density linearly against a cap of 150, which crushes
-  the middle of a heavy-tailed distribution — real counts within 1 km ranged
-  across 0, 21, 400 and 793.
-- **Every report failed in production.** The Overpass provider sent no
-  `User-Agent`; Overpass returns 406 without one. 118 unit tests still passed,
-  because they exercise the parser against recorded fixtures and never touch
-  the network.
+  normalised *amenity* density linearly against a cap of 150, which crushes the
+  middle of a heavy-tailed distribution — real counts within 1 km were 0, 21, 400
+  and 793. It now normalises logarithmically.
 
-All three are why this repo now has a browser-verification step in the plan and a
-fixture mode for CI — the fixtures earn their keep by catching regressions, not by
-standing in for ever running the real thing.
+A third bug needed something the fixtures structurally cannot provide — actually
+running the thing:
+
+- **Every report failed in production.** The Overpass provider sent no
+  `User-Agent`; Overpass answers those with 406. 118 unit tests passed regardless,
+  because they exercise the parser against recorded fixtures and never open a
+  socket.
+
+Hence both halves of the strategy here: fixtures for deterministic, offline scoring
+tests, and an end-to-end suite that drives the real application.
