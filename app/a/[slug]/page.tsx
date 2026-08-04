@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { parseSlug } from '@/lib/geo/slug';
 import { reverseGeocode } from '@/lib/providers/mapbox';
@@ -10,6 +9,7 @@ import { UrbanSuburbanBar } from '@/components/report/UrbanSuburbanBar';
 import { FifteenMinute } from '@/components/report/FifteenMinute';
 import { ReportMap } from '@/components/report/ReportMap';
 import { RecordVisit } from '@/components/report/RecordVisit';
+import { SiteNav } from '@/components/ui/SiteNav';
 
 /**
  * Last-resort label if reverse geocoding is unavailable. The slug's readable
@@ -39,23 +39,22 @@ export default async function ReportPage({
 
   return (
     <main className="min-h-screen">
-      <nav className="flex items-center gap-5 border-b border-gray-4 px-6 py-4">
-        <Link href="/" className="text-base font-bold tracking-[-0.03em] text-gray-1 no-underline">
-          rad<span className="text-accent">ius</span>
-        </Link>
-      </nav>
+      <SiteNav />
 
       <div className="mx-auto grid max-w-6xl gap-4 p-6">
         <ReportHeader report={report} />
         <RecordVisit address={report.address} slug={slug} />
         <ScoreTiles scores={report.scores} />
+        {/* Two rows of two rather than one three-child grid: with three children
+            in a two-column grid the third lands bottom-left and leaves an empty
+            half-width column beside it. */}
         <div className="grid gap-4 md:grid-cols-2">
           <ReportMap report={report} />
           <NearbyList amenities={report.amenities} />
-          <div className="grid content-start gap-4">
-            <UrbanSuburbanBar value={report.scores.urbanSuburban} />
-            <FifteenMinute data={report.fifteenMinute} />
-          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <UrbanSuburbanBar value={report.scores.urbanSuburban} />
+          <FifteenMinute data={report.fifteenMinute} />
         </div>
       </div>
     </main>

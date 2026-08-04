@@ -128,7 +128,10 @@ export function AddressSearch() {
         onChange={(e) => onQueryChange(e.target.value)}
         onKeyDown={onKeyDown}
         placeholder="Enter a US address"
-        className="w-full rounded-btn px-4 py-4 text-base text-gray-1 shadow-lg outline-none"
+        // bg-white is load-bearing, not decoration: Tailwind's preflight resets
+        // form controls to a transparent background, so on the charcoal hero the
+        // field rendered as dark-on-dark and was effectively invisible.
+        className="w-full rounded-btn bg-white px-4 py-4 text-base text-gray-1 shadow-lg outline-none placeholder:text-gray-3 focus:ring-2 focus:ring-accent"
       />
 
       {open && (
