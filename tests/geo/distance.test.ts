@@ -8,7 +8,7 @@ describe('haversineMetres', () => {
   });
 
   it('measures a known distance within 1%', () => {
-    // White House -> Washington Monument, ~1030 m
+    // White House -> Washington Monument, ~919 m
     const whiteHouse = { lat: 38.8977, lon: -77.0365 };
     const monument = { lat: 38.8895, lon: -77.0353 };
     const d = haversineMetres(whiteHouse, monument);

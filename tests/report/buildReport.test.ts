@@ -33,7 +33,6 @@ describe('buildReport', () => {
     const report = await buildReport('1600 Pennsylvania Ave NW', DC);
     expect(report.address).toBe('1600 Pennsylvania Ave NW');
     expect(report.coordinates).toEqual(DC);
-    expect(report.slug).toMatch(/-[0-9a-z]{7}$/);
     expect(report.scores.walk).toBeGreaterThan(0);
     expect(report.scores.overall).toBeGreaterThan(0);
     expect(report.amenities.length).toBeGreaterThan(0);

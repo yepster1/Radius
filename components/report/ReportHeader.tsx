@@ -5,6 +5,13 @@ const UNAVAILABLE_LABEL: Record<DataSource, string> = {
   street: 'Street-network data could not be loaded for this address.',
 };
 
+const UNAVAILABLE_CONSEQUENCE: Record<DataSource, string> = {
+  transit:
+    'Transit shows 0 because we could not retrieve it, not because there is none nearby.',
+  street:
+    'The urban–suburban index is computed from the remaining signals, so it is less precise than usual.',
+};
+
 export function ReportHeader({ report }: { report: Report }) {
   return (
     <>
@@ -46,11 +53,11 @@ export function ReportHeader({ report }: { report: Report }) {
           role="status"
           className="m-0 rounded-btn border-l-[3px] border-gray-3 bg-gray-5 px-4 py-3 text-sm text-gray-2"
         >
-          {UNAVAILABLE_LABEL[report.unavailable[0]]}
-          {report.unavailable.length > 1 &&
-            ` ${UNAVAILABLE_LABEL[report.unavailable[1]]}`}{' '}
-          Those figures show 0 because we could not retrieve the data, not because the
-          answer is 0.
+          {report.unavailable.map((source) => (
+            <span key={source}>
+              {UNAVAILABLE_LABEL[source]} {UNAVAILABLE_CONSEQUENCE[source]}{' '}
+            </span>
+          ))}
         </p>
       )}
     </>

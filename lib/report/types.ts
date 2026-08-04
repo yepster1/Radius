@@ -55,7 +55,6 @@ export type Scores = {
 export type Report = {
   address: string;
   coordinates: Coordinates;
-  slug: string;
   scores: Scores;
   amenities: Amenity[];
   transitStops: TransitStop[];

@@ -22,11 +22,11 @@ const MAX_CATEGORY_SCORE = POSITION_WEIGHTS.reduce((sum, w) => sum + w, 0);
  * same score, which is what makes it testable and safe to reuse elsewhere.
  *
  * An intersection-density penalty was specified here and then removed. Measured
- * across the four reference points, junctions/km2 came out: rural 0, car-dependent
- * suburb 238, dense urban 439, transit suburb 507. No threshold separates walkable
- * from car-dependent, and the leafy transit suburb outranks downtown DC. OSM splits
- * ways on tagging changes unrelated to street topology, so the proxy measures
- * bookkeeping as much as connectivity. Documented on /methodology.
+ * across the four reference points, junctions within a 1 km radius came out: rural
+ * 0, car-dependent suburb 238, dense urban 439, transit suburb 507. No threshold
+ * separates walkable from car-dependent, and the leafy transit suburb outranks
+ * downtown DC. OSM splits ways on tagging changes unrelated to street topology, so
+ * the proxy measures bookkeeping as much as connectivity. Documented in the README.
  */
 export function walkScore(amenities: Amenity[]): number {
   let weighted = 0;

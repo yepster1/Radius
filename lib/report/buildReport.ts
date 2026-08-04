@@ -1,4 +1,3 @@
-import { buildSlug } from '@/lib/geo/slug';
 import {
   fetchAmenities, fetchStreetContext, fetchTransitStops,
 } from '@/lib/providers/overpass';
@@ -61,7 +60,6 @@ export async function buildReport(
   return {
     address,
     coordinates: coords,
-    slug: buildSlug(address, coords.lat, coords.lon),
     scores: {
       walk,
       drive,

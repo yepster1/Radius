@@ -3707,6 +3707,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Report } from '@/lib/report/types';
 
 const WALK_RADIUS_M = 800;
+/**
+ * Marker budget. Every marker is a DOM node plus a Mapbox Marker and Popup, and
+ * a dense address puts hundreds inside the walk ring — downtown DC measured 537.
+ * The nearest few dozen convey the same picture at a fraction of the cost.
+ */
+const MAX_MARKERS = 60;
 
 /** GeoJSON circle approximating a walking radius. */
 function circle(lat: number, lon: number, radiusM: number) {
@@ -3732,7 +3738,15 @@ export function ReportMap({ report }: { report: Report }) {
 
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN;
-    if (!container.current || !token) return;
+    if (!container.current) return;
+    if (!token) {
+      // A blank grey rectangle reads as a broken map. Say what is actually wrong.
+      container.current.textContent =
+        'Map unavailable — NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN is not configured.';
+      container.current.className +=
+        ' flex items-center justify-center p-6 text-center font-mono text-xs text-gray-2';
+      return;
+    }
 
     mapboxgl.accessToken = token;
     const { lat, lon } = report.coordinates;
@@ -3759,7 +3773,11 @@ export function ReportMap({ report }: { report: Report }) {
         paint: { 'line-color': '#ff4f00', 'line-width': 1.5, 'line-dasharray': [3, 2] },
       });
 
-      for (const amenity of report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M)) {
+      const walkable = report.amenities
+        .filter((a) => a.distanceM <= WALK_RADIUS_M)
+        .slice(0, MAX_MARKERS);
+
+      for (const amenity of walkable) {
         const dot = document.createElement('div');
         dot.style.cssText =
           'width:8px;height:8px;border-radius:50%;background:#4b5563;border:1.5px solid #fff';
@@ -3767,6 +3785,17 @@ export function ReportMap({ report }: { report: Report }) {
           .setLngLat([amenity.lon, amenity.lat])
           .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(amenity.name))
           .addTo(map);
+      }
+
+      if (report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M).length > MAX_MARKERS) {
+        map.addControl(
+          new mapboxgl.AttributionControl({
+            customAttribution: `Showing the ${MAX_MARKERS} nearest of ${
+              report.amenities.filter((a) => a.distanceM <= WALK_RADIUS_M).length
+            } amenities`,
+          }),
+          'bottom-left',
+        );
       }
 
       const pin = document.createElement('div');
@@ -3828,6 +3857,147 @@ git commit -m "feat: interactive map and local search history"
 - Consumes: the entire application
 - Produces: a green CI pipeline and a live Vercel deployment
 
+- [ ] **Step 0: Add a fixture mode to the Overpass provider**
+
+The e2e tests drive the real app, whose report page calls Overpass server-side.
+Overpass is a free community service with no availability guarantee — it was fully
+unreachable while this plan was being executed. Pointing CI at it makes the badge
+report Overpass's health rather than this repository's.
+
+Fixture mode swaps the network for the four recorded reference fixtures. It is
+server-only code, off unless `RADIUS_FIXTURE_MODE` is set, and it also gives the
+live demo a fallback path if the mirrors are down during a review.
+
+Create `lib/providers/fixtures.ts`:
+
+```ts
+import { haversineMetres } from '@/lib/geo/distance';
+import type { Coordinates } from '@/lib/report/types';
+import carDependent from '@/tests/fixtures/car-dependent.json';
+import denseUrban from '@/tests/fixtures/dense-urban.json';
+import rural from '@/tests/fixtures/rural.json';
+import suburbanTransit from '@/tests/fixtures/suburban-transit.json';
+import type { OverpassElement } from './overpass';
+
+type Reference = { coords: Coordinates; elements: OverpassElement[] };
+
+/** The four locations whose Overpass responses are committed under tests/fixtures. */
+const REFERENCES: Reference[] = [
+  { coords: { lat: 38.8977, lon: -77.0365 }, elements: denseUrban.elements as OverpassElement[] },
+  { coords: { lat: 42.3736, lon: -71.1097 }, elements: suburbanTransit.elements as OverpassElement[] },
+  { coords: { lat: 33.081, lon: -96.718 }, elements: carDependent.elements as OverpassElement[] },
+  { coords: { lat: 44.2159, lon: -73.274 }, elements: rural.elements as OverpassElement[] },
+];
+
+export function fixtureModeEnabled(): boolean {
+  return process.env.RADIUS_FIXTURE_MODE === '1';
+}
+
+/**
+ * Nearest recorded reference to the requested point. Any coordinate resolves to
+ * one, so a test can use an arbitrary address and still get a deterministic,
+ * plausible answer rather than an empty report.
+ */
+export function fixtureElementsFor(coords: Coordinates): OverpassElement[] {
+  let best = REFERENCES[0];
+  let bestDistance = Infinity;
+
+  for (const reference of REFERENCES) {
+    const distance = haversineMetres(coords, reference.coords);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = reference;
+    }
+  }
+
+  return best.elements;
+}
+```
+
+In `lib/providers/overpass.ts`, add the short-circuit at the top of each fetch
+function — **not** inside `runQuery`, because the transit and street queries need
+different shapes than the amenity fixtures provide:
+
+```ts
+export async function fetchAmenities(
+  coords: Coordinates,
+  radiusM: number,
+): Promise<Amenity[]> {
+  if (fixtureModeEnabled()) {
+    return parseAmenityElements(fixtureElementsFor(coords), coords)
+      .filter((a) => a.distanceM <= radiusM);
+  }
+  // ...existing implementation
+```
+
+```ts
+export async function fetchTransitStops(
+  coords: Coordinates,
+  radiusM: number,
+): Promise<TransitStop[]> {
+  if (fixtureModeEnabled()) {
+    // The amenity fixtures carry no transit data; an empty result is honest and
+    // deterministic, and buildReport already handles it without degrading.
+    return [];
+  }
+  // ...existing implementation
+```
+
+```ts
+export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
+  if (fixtureModeEnabled()) {
+    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: true };
+  }
+  // ...existing implementation
+```
+
+Add `import { fixtureElementsFor, fixtureModeEnabled } from './fixtures';` to
+`lib/providers/overpass.ts`.
+
+Then create `tests/providers/fixtures.test.ts`:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { fixtureElementsFor } from '@/lib/providers/fixtures';
+
+describe('fixtureElementsFor', () => {
+  it('returns the dense-urban set for a Washington DC coordinate', () => {
+    const elements = fixtureElementsFor({ lat: 38.8977, lon: -77.0365 });
+    expect(elements.length).toBeGreaterThan(1000);
+  });
+
+  it('returns the rural set for a Vermont coordinate', () => {
+    const elements = fixtureElementsFor({ lat: 44.2159, lon: -73.274 });
+    expect(elements.length).toBeLessThan(20);
+  });
+
+  it('resolves an arbitrary coordinate to its nearest reference', () => {
+    // Baltimore is nearest to the DC reference of the four.
+    const elements = fixtureElementsFor({ lat: 39.2904, lon: -76.6122 });
+    expect(elements.length).toBeGreaterThan(1000);
+  });
+
+  it('never returns an empty set', () => {
+    for (const coords of [
+      { lat: 61.2181, lon: -149.9003 },
+      { lat: 25.7617, lon: -80.1918 },
+    ]) {
+      expect(fixtureElementsFor(coords).length).toBeGreaterThan(0);
+    }
+  });
+});
+```
+
+Run: `npm test -- fixtures`
+Expected: PASS — 4 tests
+
+Verify both modes work:
+
+```bash
+RADIUS_FIXTURE_MODE=1 npm run dev
+# a report should render in well under a second, with no network call to Overpass
+```
+
 - [ ] **Step 1: Install and configure Playwright**
 
 ```bash
@@ -3849,7 +4019,9 @@ export default defineConfig({
   use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'npm run build && npm run start',
+    // Fixture mode: the report page must not depend on a free community API
+    // whose downtime would show up as a red badge on this repository.
+    command: 'RADIUS_FIXTURE_MODE=1 npm run build && RADIUS_FIXTURE_MODE=1 npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
@@ -3998,6 +4170,7 @@ jobs:
       - name: End-to-end tests
         run: npm run test:e2e
         env:
+          RADIUS_FIXTURE_MODE: '1'
           NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
 ```

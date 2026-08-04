@@ -4,6 +4,7 @@ import { countJunctions, type HighwayWay } from '@/lib/geo/junctions';
 import type {
   Amenity, CategoryId, Coordinates, StreetContext, TransitStop,
 } from '@/lib/report/types';
+import { fixtureElementsFor, fixtureModeEnabled } from './fixtures';
 
 export const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
@@ -22,30 +23,82 @@ export type OverpassElement = {
   nodes?: number[];
 };
 
-/** Try each mirror in turn; only throw when every endpoint fails. */
-async function runQuery(query: string): Promise<OverpassElement[]> {
-  let lastError: unknown;
+/** How long to wait for a mirror before also trying the next one. */
+const HEDGE_DELAY_MS = 8_000;
+/** Hard ceiling on any single mirror attempt. */
+const ATTEMPT_TIMEOUT_MS = 45_000;
 
-  for (const endpoint of OVERPASS_ENDPOINTS) {
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        // Overpass returns 406 to requests with no User-Agent, and Node's fetch
-        // sends none by default — without this every query fails in production.
-        // The fixture-recording script hit the same wall in Task 4.
-        headers: { 'User-Agent': 'RadiusAddressInsights/0.1 (+https://radius-address-insights.vercel.app)' },
-        body: new URLSearchParams({ data: query }),
-        next: { revalidate: 86_400 }, // 24h — shops do not move
-      });
-      if (!res.ok) throw new Error(`${endpoint} returned ${res.status}`);
-      const json = (await res.json()) as { elements?: OverpassElement[] };
-      return json.elements ?? [];
-    } catch (error) {
-      lastError = error;
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function queryEndpoint(
+  endpoint: string,
+  query: string,
+): Promise<OverpassElement[]> {
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    // Overpass returns 406 to requests with no User-Agent, and Node's fetch
+    // sends none by default — without this every query fails in production.
+    // The fixture-recording script hit the same wall in Task 4.
+    headers: { 'User-Agent': 'RadiusAddressInsights/0.1 (+https://radius-address-insights.vercel.app)' },
+    body: new URLSearchParams({ data: query }),
+    signal: AbortSignal.timeout(ATTEMPT_TIMEOUT_MS),
+    next: { revalidate: 86_400 }, // 24h — shops do not move
+  });
+  if (!res.ok) throw new Error(`${endpoint} returned ${res.status}`);
+  const json = (await res.json()) as { elements?: OverpassElement[] };
+  return json.elements ?? [];
+}
+
+/**
+ * Query the mirrors as hedged requests: start the first, and only bring in the
+ * next if the previous has not answered within HEDGE_DELAY_MS. The first
+ * success wins; we throw only when every mirror has failed.
+ *
+ * Trying them strictly in sequence — the previous approach — means a mirror
+ * that hangs before failing costs its full timeout before the healthy one is
+ * ever tried. Measured against the public mirrors during an outage: one
+ * returned a connection error, the second 504'd after 86s, and only the third
+ * answered, so a sequential walk took well over two minutes for a query the
+ * healthy mirror served in 47s. Hedging bounds that at roughly the fastest
+ * mirror's own latency while still, in the common case, sending just one
+ * request — Overpass asks not to be hammered.
+ */
+async function runQuery(query: string): Promise<OverpassElement[]> {
+  const attempts: Promise<OverpassElement[]>[] = [];
+  const failures: unknown[] = [];
+  let settled = false;
+
+  for (let i = 0; i < OVERPASS_ENDPOINTS.length; i += 1) {
+    attempts.push(
+      queryEndpoint(OVERPASS_ENDPOINTS[i], query).catch((error: unknown) => {
+        failures.push(error);
+        throw error;
+      }),
+    );
+
+    // Give the mirrors already in flight a head start before adding another.
+    if (i < OVERPASS_ENDPOINTS.length - 1) {
+      const winner = await Promise.race([
+        Promise.any(attempts).then(
+          (elements) => {
+            settled = true;
+            return elements;
+          },
+          () => undefined, // all so far failed; fall through and hedge
+        ),
+        sleep(HEDGE_DELAY_MS).then(() => undefined),
+      ]);
+      if (settled && winner) return winner;
     }
   }
 
-  throw new Error(`All Overpass endpoints failed: ${String(lastError)}`);
+  try {
+    return await Promise.any(attempts);
+  } catch {
+    throw new Error(
+      `All Overpass endpoints failed: ${failures.map(String).join('; ')}`,
+    );
+  }
 }
 
 function coordsOf(element: OverpassElement): Coordinates | null {
@@ -102,6 +155,11 @@ export async function fetchAmenities(
   coords: Coordinates,
   radiusM: number,
 ): Promise<Amenity[]> {
+  if (fixtureModeEnabled()) {
+    return parseAmenityElements(await fixtureElementsFor(coords), coords)
+      .filter((a) => a.distanceM <= radiusM);
+  }
+
   const filters = CATEGORIES.flatMap((c) => c.tags)
     .map((tag) => {
       const [key, value] = tag.split('=');
@@ -117,6 +175,12 @@ export async function fetchTransitStops(
   coords: Coordinates,
   radiusM: number,
 ): Promise<TransitStop[]> {
+  if (fixtureModeEnabled()) {
+    // The amenity fixtures carry no transit data; an empty result is honest and
+    // deterministic, and buildReport already handles it without degrading.
+    return [];
+  }
+
   const query = `[out:json][timeout:30];
 (
   nwr["public_transport"="stop_position"](around:${radiusM},${coords.lat},${coords.lon});
@@ -152,6 +216,15 @@ out center;`;
 }
 
 export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
+  if (fixtureModeEnabled()) {
+    // These are downtown DC's measured values, retained only so the shape is
+    // realistic — they are not derived from `coords`. `available: false` is
+    // the honest signal here: they are placeholders, and urbanSuburbanIndex
+    // already renormalises over the remaining signals when street data is
+    // unavailable, so this does not silently misrepresent other addresses.
+    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: false };
+  }
+
   // An "intersection" per the published methodology is a node shared by two
   // or more highway ways (degree >= 3, counting the ways that meet there).
   // `out count` over `node(w)` counts every node on every way — including
