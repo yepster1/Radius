@@ -233,6 +233,28 @@ Append to `eslint.config.mjs` (inside the exported array):
 
 ```js
 {
+  // Components render a Report; they never compute one and never touch I/O.
+  // This is the enforceable half of the layering rule. `server-only` was tried
+  // here first and verified useless: under Next 16 its throw is stripped from
+  // the client bundle entirely, so it guards nothing while looking like it does.
+  files: ['components/**/*.ts', 'components/**/*.tsx'],
+  rules: {
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['@/lib/providers/**', '**/providers/**'],
+            message:
+              'Components must not import providers — they read secrets and perform I/O. ' +
+              'Fetch in a server component or route handler and pass the data down as props.',
+          },
+        ],
+      },
+    ],
+  },
+},
+{
   files: ['lib/scoring/**/*.ts'],
   rules: {
     'no-restricted-globals': [
