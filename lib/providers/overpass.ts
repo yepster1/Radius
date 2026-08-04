@@ -4,6 +4,7 @@ import { countJunctions, type HighwayWay } from '@/lib/geo/junctions';
 import type {
   Amenity, CategoryId, Coordinates, StreetContext, TransitStop,
 } from '@/lib/report/types';
+import { fixtureElementsFor, fixtureModeEnabled } from './fixtures';
 
 export const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
@@ -154,6 +155,11 @@ export async function fetchAmenities(
   coords: Coordinates,
   radiusM: number,
 ): Promise<Amenity[]> {
+  if (fixtureModeEnabled()) {
+    return parseAmenityElements(fixtureElementsFor(coords), coords)
+      .filter((a) => a.distanceM <= radiusM);
+  }
+
   const filters = CATEGORIES.flatMap((c) => c.tags)
     .map((tag) => {
       const [key, value] = tag.split('=');
@@ -169,6 +175,12 @@ export async function fetchTransitStops(
   coords: Coordinates,
   radiusM: number,
 ): Promise<TransitStop[]> {
+  if (fixtureModeEnabled()) {
+    // The amenity fixtures carry no transit data; an empty result is honest and
+    // deterministic, and buildReport already handles it without degrading.
+    return [];
+  }
+
   const query = `[out:json][timeout:30];
 (
   nwr["public_transport"="stop_position"](around:${radiusM},${coords.lat},${coords.lon});
@@ -204,6 +216,10 @@ out center;`;
 }
 
 export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
+  if (fixtureModeEnabled()) {
+    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: true };
+  }
+
   // An "intersection" per the published methodology is a node shared by two
   // or more highway ways (degree >= 3, counting the ways that meet there).
   // `out count` over `node(w)` counts every node on every way — including

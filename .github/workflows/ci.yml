@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+        env:
+          RADIUS_FIXTURE_MODE: '1'
+          NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN }}
+          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
