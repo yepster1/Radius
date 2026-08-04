@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #ff4f00;
+  --color-accent-tint: #fff1eb;
+  --color-charcoal: #141516;
+  --color-gray-1: #252a31;
+  --color-gray-2: #4b5563;
+  --color-gray-3: #adb4c2;
+  --color-gray-4: #e5e7eb;
+  --color-gray-5: #f3f5f9;
+
+  --font-display: var(--font-archivo), Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-card: 8px;
+  --radius-btn: 4.5px;
+}
+
+body {
+  font-family: var(--font-display);
+  color: var(--color-gray-1);
+  background: #fff;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* Every mono surface — buttons, labels, score captions — carries this
+   tracking. Setting it on the utility means components never restate it. */
+.font-mono {
+  letter-spacing: 0.015em;
+}
