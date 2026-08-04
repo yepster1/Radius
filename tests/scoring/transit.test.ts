@@ -36,4 +36,21 @@ describe('transitScore', () => {
     );
     expect(transitScore(many)).toBe(100);
   });
+
+  it('pins the calibration anchors so K cannot drift unnoticed', () => {
+    // Ordering tests cannot protect K — any positive scalar preserves ordering,
+    // and the saturation test clamps to 100 for any K above ~0.11. Without
+    // these exact values K could be changed tenfold and every other test would
+    // still pass, while the headline Overall Score shifted by 25%.
+    expect(transitScore([stop({ mode: 'bus', routeCount: 1, distanceM: 300 })])).toBe(3);
+    expect(transitScore([stop({ mode: 'rail', routeCount: 1, distanceM: 300 })])).toBe(8);
+    expect(transitScore([stop({ mode: 'rail', routeCount: 3, distanceM: 400 })])).toBe(21);
+    expect(
+      transitScore(
+        Array.from({ length: 6 }, (_, i) =>
+          stop({ id: i, mode: 'bus', routeCount: 2, distanceM: 300 }),
+        ),
+      ),
+    ).toBe(34);
+  });
 });
