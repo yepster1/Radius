@@ -100,13 +100,21 @@ would have sailed past:
   middle of a heavy-tailed distribution — real counts within 1 km were 0, 21, 400
   and 793. It now normalises logarithmically.
 
-A third bug needed something the fixtures structurally cannot provide — actually
+Two more needed something the fixtures structurally cannot provide — actually
 running the thing:
 
 - **Every report failed in production.** The Overpass provider sent no
   `User-Agent`; Overpass answers those with 406. 118 unit tests passed regardless,
   because they exercise the parser against recorded fixtures and never open a
   socket.
+- **The response cache silently cached nothing.** The Overpass calls carried
+  `next: { revalidate: 86400 }`, which looks like it works and passes review. It
+  does not: the amenity response for a dense address is 5.55 MB and Next's Data
+  Cache refuses entries over 2 MB, so every write failed with
+  `items over 2MB can not be cached` and every visitor paid a full cold round
+  trip. The fix is to cache the *parsed* result instead — six fields per amenity
+  rather than ~313 OSM tag keys, which is a 5.3x reduction and lands at 1.1 MB on
+  disk. Measured on the same address: **19.8 s cold, 0.05 s warm.**
 
 Hence both halves of the strategy here: fixtures for deterministic, offline scoring
 tests, and an end-to-end suite that drives the real application.
