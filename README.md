@@ -5,6 +5,28 @@ and how urban the area is — with every number traceable to its source.
 
 **Live:** https://radius-address-insights.vercel.app/
 
+## FOR RentEngine
+
+Honestly, all the code was written by AI. However I was heavily involved in planning, architecture, debugging, QA/testing and UX/UI.
+
+### How I approached the problem
+
+A developer in the modern age needs to be wore than a code monkey. We need to think about the end user, and the product for day one (or minute one in this case). My customer in this case is actually you, rent engine, so I made a system that I thought you could use, and targeted it at your client base. Giving a property manager information about a potential listing before listing it. I then worked on UI/UX, what I would want this to look like (and matched the styling to your webpage as best I could). I then narrowed down  scope as much as I could (I had a lot of ideas). You can see the results of the planning in the .lavish folder (for design and architecture), and the docs/superpowers for the implementation plan
+
+**It is slower than I would have wanted it to be, this is to do with the downstream API (overpass), I improved this a bit, and we have caching, but I didn't have time to properly debug this.**
+
+## Design Decisions 
+
+This entire project is a design desicion 😅
+
+but a non exhaustive list of important decisions are:
+- narrowing down what features I wanted to build after deciding on the target. Things like renter fit ended up being dropped but I would have liked that.
+- data sources. Mapbox for geocoding and tiles. openstreetmap overpass for everything else. 
+- the look (matching rentEngine styling, trying to make it look like something you would have on your system)
+- scoring methodology (we compute all the scoring in house and don't try and grab bit's of data from other API. scores were scaled logarithmically as things got further away, which is what I would want in a real system (the difference between 1km and 2km seems bigger than 7 km and 8km))
+- Search history is localStorage-only as it wouldn't make sense to be shared
+- Fixtures are recorded from real places, not hand-written
+
 ## Brief coverage
 
 | Asked for | Delivered | How |
@@ -84,37 +106,3 @@ e2e suite runs the real app but
 sets `RADIUS_FIXTURE_MODE=1`, which swaps the Overpass provider for those same
 fixtures — CI stays green on the health of this repository, not of a free
 community API with no uptime guarantee.
-
-### What testing against real places caught
-
-Scoring formulas look plausible on synthetic inputs and fail on real ones. Testing
-against four recorded real locations caught two bugs that hand-written test data
-would have sailed past:
-
-- **Walk Score always showed 100.** Washington DC, Brookline MA and Plano TX all
-  scored the maximum — a normalisation bug where a value that could range up to
-  1.75 was scaled as though its range topped out at 1. Synthetic amenities never
-  produced enough categories at once to reveal it.
-- **A Plano, TX subdivision was labelled "Rural."** The Urban ↔ Suburban Index
-  normalised *amenity* density linearly against a cap of 150, which crushes the
-  middle of a heavy-tailed distribution — real counts within 1 km were 0, 21, 400
-  and 793. It now normalises logarithmically.
-
-Two more needed something the fixtures structurally cannot provide — actually
-running the thing:
-
-- **Every report failed in production.** The Overpass provider sent no
-  `User-Agent`; Overpass answers those with 406. 118 unit tests passed regardless,
-  because they exercise the parser against recorded fixtures and never open a
-  socket.
-- **The response cache silently cached nothing.** The Overpass calls carried
-  `next: { revalidate: 86400 }`, which looks like it works and passes review. It
-  does not: the amenity response for a dense address is 5.55 MB and Next's Data
-  Cache refuses entries over 2 MB, so every write failed with
-  `items over 2MB can not be cached` and every visitor paid a full cold round
-  trip. The fix is to cache the *parsed* result instead — six fields per amenity
-  rather than ~313 OSM tag keys, which is a 5.3x reduction and lands at 1.1 MB on
-  disk. Measured on the same address: **19.8 s cold, 0.05 s warm.**
-
-Hence both halves of the strategy here: fixtures for deterministic, offline scoring
-tests, and an end-to-end suite that drives the real application.
