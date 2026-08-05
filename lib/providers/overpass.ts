@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { haversineMetres } from '@/lib/geo/distance';
 import { CATEGORIES } from '@/lib/scoring/categories';
 import { countJunctions, type HighwayWay } from '@/lib/geo/junctions';
@@ -27,6 +28,8 @@ export type OverpassElement = {
 const HEDGE_DELAY_MS = 8_000;
 /** Hard ceiling on any single mirror attempt. */
 const ATTEMPT_TIMEOUT_MS = 45_000;
+/** 24h — shops do not move. */
+const CACHE_TTL_S = 86_400;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -42,7 +45,14 @@ async function queryEndpoint(
     headers: { 'User-Agent': 'RadiusAddressInsights/0.1 (+https://radius-address-insights.vercel.app)' },
     body: new URLSearchParams({ data: query }),
     signal: AbortSignal.timeout(ATTEMPT_TIMEOUT_MS),
-    next: { revalidate: 86_400 }, // 24h — shops do not move
+    // Deliberately uncached at the HTTP layer. This used to carry
+    // `next: { revalidate: 86_400 }`, which silently did nothing: the amenity
+    // response for a dense address is 5.55 MB and Next's Data Cache refuses
+    // entries over 2 MB, so every write failed with
+    // "items over 2MB can not be cached" and every visit paid a full round
+    // trip. Caching now happens one level up, on the parsed result — see
+    // `cachedAmenities` below.
+    cache: 'no-store',
   });
   if (!res.ok) throw new Error(`${endpoint} returned ${res.status}`);
   const json = (await res.json()) as { elements?: OverpassElement[] };
@@ -151,6 +161,35 @@ export function parseAmenityElements(
   return amenities.sort((a, b) => a.distanceM - b.distanceM);
 }
 
+/**
+ * Cache the parsed amenity list rather than the raw response. Measured on the
+ * dense-urban fixture, parsing is a 5.3x reduction — we keep six fields per
+ * amenity and discard the other ~307 OSM tag keys — which brings a 5.55 MB
+ * response down to roughly 1 MB and back inside the cache's 2 MB entry limit.
+ *
+ * Keyed on the arguments, and the arguments are stable: coordinates reach here
+ * from `parseSlug`, which decodes a geohash to a fixed cell centre, so every
+ * visitor to a shared link produces the same key and shares one entry.
+ */
+const cachedAmenities = unstable_cache(
+  async (lat: number, lon: number, radiusM: number): Promise<Amenity[]> => {
+    const coords = { lat, lon };
+    const filters = CATEGORIES.flatMap((c) => c.tags)
+      .map((tag) => {
+        const [key, value] = tag.split('=');
+        return `nwr["${key}"="${value}"](around:${radiusM},${lat},${lon});`;
+      })
+      .join('\n  ');
+
+    const elements = await runQuery(
+      `[out:json][timeout:30];\n(\n  ${filters}\n);\nout center;`,
+    );
+    return parseAmenityElements(elements, coords);
+  },
+  ['overpass-amenities'],
+  { revalidate: CACHE_TTL_S },
+);
+
 export async function fetchAmenities(
   coords: Coordinates,
   radiusM: number,
@@ -160,16 +199,48 @@ export async function fetchAmenities(
       .filter((a) => a.distanceM <= radiusM);
   }
 
-  const filters = CATEGORIES.flatMap((c) => c.tags)
-    .map((tag) => {
-      const [key, value] = tag.split('=');
-      return `nwr["${key}"="${value}"](around:${radiusM},${coords.lat},${coords.lon});`;
-    })
-    .join('\n  ');
-
-  const elements = await runQuery(`[out:json][timeout:30];\n(\n  ${filters}\n);\nout center;`);
-  return parseAmenityElements(elements, coords);
+  return cachedAmenities(coords.lat, coords.lon, radiusM);
 }
+
+const cachedTransitStops = unstable_cache(
+  async (lat: number, lon: number, radiusM: number): Promise<TransitStop[]> => {
+    const coords = { lat, lon };
+    const query = `[out:json][timeout:30];
+(
+  nwr["public_transport"="stop_position"](around:${radiusM},${lat},${lon});
+  nwr["highway"="bus_stop"](around:${radiusM},${lat},${lon});
+  nwr["railway"="station"](around:${radiusM},${lat},${lon});
+);
+out center;`;
+
+    const elements = await runQuery(query);
+    const stops: TransitStop[] = [];
+
+    for (const element of elements) {
+      const tags = element.tags;
+      const position = coordsOf(element);
+      if (!tags || !position) continue;
+
+      const mode: TransitStop['mode'] =
+        tags.railway === 'station' || tags.train === 'yes' ? 'rail'
+        : tags.light_rail === 'yes' ? 'light_rail'
+        : tags.tram === 'yes' ? 'tram'
+        : 'bus';
+
+      stops.push({
+        id: element.id,
+        name: tags.name ?? 'Transit stop',
+        mode,
+        routeCount: Number(tags.route_ref?.split(';').length ?? 1),
+        distanceM: Math.round(haversineMetres(coords, position)),
+      });
+    }
+
+    return stops.sort((a, b) => a.distanceM - b.distanceM);
+  },
+  ['overpass-transit'],
+  { revalidate: CACHE_TTL_S },
+);
 
 export async function fetchTransitStops(
   coords: Coordinates,
@@ -181,64 +252,29 @@ export async function fetchTransitStops(
     return [];
   }
 
-  const query = `[out:json][timeout:30];
-(
-  nwr["public_transport"="stop_position"](around:${radiusM},${coords.lat},${coords.lon});
-  nwr["highway"="bus_stop"](around:${radiusM},${coords.lat},${coords.lon});
-  nwr["railway"="station"](around:${radiusM},${coords.lat},${coords.lon});
-);
-out center;`;
-
-  const elements = await runQuery(query);
-  const stops: TransitStop[] = [];
-
-  for (const element of elements) {
-    const tags = element.tags;
-    const position = coordsOf(element);
-    if (!tags || !position) continue;
-
-    const mode: TransitStop['mode'] =
-      tags.railway === 'station' || tags.train === 'yes' ? 'rail'
-      : tags.light_rail === 'yes' ? 'light_rail'
-      : tags.tram === 'yes' ? 'tram'
-      : 'bus';
-
-    stops.push({
-      id: element.id,
-      name: tags.name ?? 'Transit stop',
-      mode,
-      routeCount: Number(tags.route_ref?.split(';').length ?? 1),
-      distanceM: Math.round(haversineMetres(coords, position)),
-    });
-  }
-
-  return stops.sort((a, b) => a.distanceM - b.distanceM);
+  return cachedTransitStops(coords.lat, coords.lon, radiusM);
 }
 
-export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
-  if (fixtureModeEnabled()) {
-    // These are downtown DC's measured values, retained only so the shape is
-    // realistic — they are not derived from `coords`. `available: false` is
-    // the honest signal here: they are placeholders, and urbanSuburbanIndex
-    // already renormalises over the remaining signals when street data is
-    // unavailable, so this does not silently misrepresent other addresses.
-    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: false };
-  }
-
-  // An "intersection" per the published methodology is a node shared by two
-  // or more highway ways (degree >= 3, counting the ways that meet there).
-  // `out count` over `node(w)` counts every node on every way — including
-  // curve vertices — which inflates the figure several fold. Fetch the way
-  // geometry instead and let countJunctions() do the real counting.
-  const highwaysQuery = `[out:json][timeout:30];
-way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"](around:1000,${coords.lat},${coords.lon});
+/**
+ * Worth caching for the same reason as amenities, only more so: the highways
+ * query returns every node id of every way in a 1 km radius — hundreds of
+ * arrays — and all we keep is two integers.
+ */
+const cachedStreetContext = unstable_cache(
+  async (lat: number, lon: number): Promise<StreetContext> => {
+    // An "intersection" per the published methodology is a node shared by two
+    // or more highway ways (degree >= 3, counting the ways that meet there).
+    // `out count` over `node(w)` counts every node on every way — including
+    // curve vertices — which inflates the figure several fold. Fetch the way
+    // geometry instead and let countJunctions() do the real counting.
+    const highwaysQuery = `[out:json][timeout:30];
+way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"](around:1000,${lat},${lon});
 out skel;`;
 
-  const buildingsQuery = `[out:json][timeout:30];
-way["building"](around:500,${coords.lat},${coords.lon});
+    const buildingsQuery = `[out:json][timeout:30];
+way["building"](around:500,${lat},${lon});
 out count;`;
 
-  try {
     const [highwayElements, buildingElements] = await Promise.all([
       runQuery(highwaysQuery),
       runQuery(buildingsQuery),
@@ -257,6 +293,25 @@ out count;`;
       buildingsWithin500m: Number(buildingCount?.tags?.ways ?? 0),
       available: true,
     };
+  },
+  ['overpass-street'],
+  { revalidate: CACHE_TTL_S },
+);
+
+export async function fetchStreetContext(coords: Coordinates): Promise<StreetContext> {
+  if (fixtureModeEnabled()) {
+    // These are downtown DC's measured values, retained only so the shape is
+    // realistic — they are not derived from `coords`. `available: false` is
+    // the honest signal here: they are placeholders, and urbanSuburbanIndex
+    // already renormalises over the remaining signals when street data is
+    // unavailable, so this does not silently misrepresent other addresses.
+    return { intersectionsWithin1km: 439, buildingsWithin500m: 320, available: false };
+  }
+
+  try {
+    // The catch stays out here on purpose: unstable_cache only stores resolved
+    // values, so a failed lookup is never cached as if it were a real answer.
+    return await cachedStreetContext(coords.lat, coords.lon);
   } catch {
     // Street context is a refinement, not a requirement — degrade to
     // neutral, but flag it so downstream scoring can renormalize rather
